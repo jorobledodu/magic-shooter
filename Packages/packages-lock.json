@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.jorgerobledo.tools": {
-      "version": "file:D:/Proyectos Unity/_Unity Packages/Tools",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.unity.burst": {
       "version": "1.8.8",
       "depth": 1,
