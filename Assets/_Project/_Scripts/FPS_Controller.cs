@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FPS_Controller : MonoBehaviour
 {
-    public bool CanMove {  get; private set; }
-    public bool CanJump { get; private set; }
-    public bool CanCrouch { get; private set; }
+    public bool CanMoveJump { get; private set; } = true;
+    public bool CanCrouch { get; private set; } = true;
+    private bool ShouldCrouch => Input.GetKeyDown(crouchKey) && !duringCrouchAnimation && characterController.isGrounded;
+    public bool CanLook {  get; private set; } = true;
 
     ///References
     private CharacterController characterController;
@@ -14,6 +16,7 @@ public class FPS_Controller : MonoBehaviour
 
     [Header("Movement Parameters")]
     [SerializeField] private float walkSpeed = 3.0f;
+    [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float sprintMultiplier = 2.0f;
 
     [Header("Crouch Parameters")]
@@ -43,12 +46,15 @@ public class FPS_Controller : MonoBehaviour
     [SerializeField] private string mouseXInput = "Mouse X";
     [SerializeField] private string mouseYInput = "Mouse Y";
 
-    [Header("Footstep Sounds")]
-    [SerializeField] private AudioSource footstepSource;
+    [Header("Sounds")]
+    [SerializeField] private AudioSource audioSource;
+
+    ///Footsteps
     [SerializeField] private AudioClip[] footstepSounds;
-    [SerializeField] private float walksStepInterval = 0.5f;
+    [SerializeField] private float walksStepInterval = 0.6f;
+    [SerializeField] private float crouchStepInterval = 0.9f;
     [SerializeField] private float sprintStepInterval = 0.3f;
-    [SerializeField] private float velocityThreshold = 2.0f;
+    [SerializeField] private float velocityThreshold = 1.0f;
 
     ///Variables
     ///Movement
@@ -56,6 +62,7 @@ public class FPS_Controller : MonoBehaviour
     private bool isMoving;
     private bool isCrouching;
     private bool duringCrouchAnimation;
+    public float Magnitude;
 
     ///Look
     private float verticalRotation;
@@ -80,8 +87,14 @@ public class FPS_Controller : MonoBehaviour
     }
     private void Update()
     {
-        HandleMovement();
-        HandleRotation();
+        Magnitude = characterController.velocity.magnitude;
+
+        if (CanMoveJump) HandleMovement();
+
+        if (CanCrouch) HandleCrouching();
+
+        if (CanLook) HandleRotation();
+
         HandleFootsteps();
     }
 
@@ -90,10 +103,10 @@ public class FPS_Controller : MonoBehaviour
         float verticalInput = Input.GetAxis(verticalMoveInput);
         float horizontalInput = Input.GetAxis(horizontalMoveInput);
 
-        float speedMutiplier = Input.GetKey(sprintKey) ? sprintMultiplier : 1.0f;
+        float speedMutiplier = isCrouching ? 1.0f : Input.GetKey(sprintKey) ? sprintMultiplier : 1.0f;
 
-        float horizontalSpeed = horizontalInput * walkSpeed * speedMutiplier;
-        float verticalSpeed = verticalInput * walkSpeed * speedMutiplier;
+        float horizontalSpeed = horizontalInput * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
+        float verticalSpeed = verticalInput * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
 
         Vector3 horizontalMovement = new Vector3 (horizontalSpeed, 0, verticalSpeed);
         horizontalMovement = transform.rotation * horizontalMovement;
@@ -103,17 +116,18 @@ public class FPS_Controller : MonoBehaviour
         currentMovement.x = horizontalMovement.x;
         currentMovement.z = horizontalMovement.z;
 
+
         characterController.Move(currentMovement * Time.deltaTime);
 
         isMoving = verticalInput != 0 || horizontalInput != 0;
     }
     private void HandleGravityAndJumping() 
     {
-        if (characterController.isGrounded)
+        if (characterController.isGrounded && !isCrouching)
         {
             currentMovement.y = -0.5f;
 
-            if (Input.GetKey(jumpKey))
+            if (!Physics.Raycast(fpCamera.transform.position, Vector3.up, 1) && Input.GetKey(jumpKey))
             {
                 currentMovement.y = jumpForce;
             }
@@ -122,6 +136,42 @@ public class FPS_Controller : MonoBehaviour
         {
             currentMovement.y -= gravity * Time.deltaTime;
         }
+    }
+    private void HandleCrouching()
+    {
+        if (ShouldCrouch)
+        {
+            StartCoroutine(CrouchStand());
+        }
+    }
+    private IEnumerator CrouchStand()
+    {
+        if (isCrouching && Physics.Raycast(fpCamera.transform.position, Vector3.up, 1)) yield break;
+
+        duringCrouchAnimation = true;
+
+        float timeElapsed = 0;
+        float targetHeight = isCrouching ? standingHeight : crouchHeight;
+        float currentHeight = characterController.height;
+        Vector3 targetCenter = isCrouching ? standingCenter : crouchingCenter;
+        Vector3 currentCenter = characterController.center;
+
+        //Mientras tiempoElapsed sea menor que el tiempo para agacharse va a hacerse la animacion de bajar el centro y la altura del personaje
+        while (timeElapsed < timeToCrouch)
+        {
+            //Bajada/Subida progresiva desde current a target en determinado tiempo
+            characterController.height = Mathf.Lerp(currentHeight, targetHeight, timeElapsed / timeToCrouch);
+            characterController.center = Vector3.Lerp(currentCenter, currentCenter, timeElapsed / timeToCrouch);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        characterController.height = targetHeight;
+        characterController.center = targetCenter;
+
+        isCrouching = !isCrouching;
+
+        duringCrouchAnimation = false;
     }
     private void HandleRotation()
     {
@@ -134,7 +184,7 @@ public class FPS_Controller : MonoBehaviour
     }
     private void HandleFootsteps()
     {
-        float currentStepInterval = (Input.GetKey(sprintKey) ? sprintStepInterval : walksStepInterval);
+        float currentStepInterval = ( isCrouching ? crouchStepInterval : Input.GetKey(sprintKey) ? sprintStepInterval : walksStepInterval);
 
         if (characterController.isGrounded && isMoving && Time.time > nextStepTime && characterController.velocity.magnitude > velocityThreshold)
         {
@@ -159,7 +209,7 @@ public class FPS_Controller : MonoBehaviour
         }
 
         lastPlayedIndex = randomIndex;
-        footstepSource.clip = footstepSounds[randomIndex];
-        footstepSource.Play();
+        audioSource.clip = footstepSounds[randomIndex];
+        audioSource.Play();
     }
 }
