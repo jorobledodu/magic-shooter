@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FPS_Controller : MonoBehaviour
 {
-    public bool CanMoveJump { get; private set; } = true;
-    public bool CanCrouch { get; private set; } = true;
-    private bool ShouldCrouch => Input.GetKeyDown(crouchKey) && !duringCrouchAnimation && characterController.isGrounded;
-    public bool CanLook {  get; private set; } = true;
+    public bool CanMoveJump { get; set; } = true;
+    public bool CanCrouch { get; set; } = true;
+    private bool ShouldCrouch => crouchAction.triggered && !duringCrouchAnimation && characterController.isGrounded;
+    public bool CanLook {  get; set; } = true;
 
     ///References
+    private PlayerInputActionAsset playerInputActionAsset;
     private CharacterController characterController;
     private Camera fpCamera;
 
@@ -34,18 +36,6 @@ public class FPS_Controller : MonoBehaviour
     [SerializeField] private float mouseSensitivity = 2.0f;
     [SerializeField] private float upDownClampRange = 80.0f;
 
-    [Header("Inputs Customisation")]
-    ///Movement
-    [SerializeField] private string horizontalMoveInput = "Horizontal";
-    [SerializeField] private string verticalMoveInput = "Vertical";
-    [SerializeField] private KeyCode jumpKey = KeyCode.Space;
-    [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
-    [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
-
-    ///Look 
-    [SerializeField] private string mouseXInput = "Mouse X";
-    [SerializeField] private string mouseYInput = "Mouse Y";
-
     [Header("Sounds")]
     [SerializeField] private AudioSource audioSource;
 
@@ -62,7 +52,6 @@ public class FPS_Controller : MonoBehaviour
     private bool isMoving;
     private bool isCrouching;
     private bool duringCrouchAnimation;
-    public float Magnitude;
 
     ///Look
     private float verticalRotation;
@@ -71,14 +60,53 @@ public class FPS_Controller : MonoBehaviour
     private float nextStepTime;
     private int lastPlayedIndex = -1;
 
+    ///InputActions
+    private InputAction moveAction;
+    private InputAction lookAction;
+    private InputAction jumpAction;
+    private InputAction sprintAction;
+    private InputAction crouchAction;
+
+    ///Input Variables
+    public Vector2 moveInput;
+    public Vector2 lookInput;
+
+    private void Awake()
+    {
+        playerInputActionAsset = new PlayerInputActionAsset();
+
+        moveAction = playerInputActionAsset.Player.Move;
+        lookAction = playerInputActionAsset.Player.Look;
+        jumpAction = playerInputActionAsset.Player.Jump;
+        sprintAction = playerInputActionAsset.Player.Sprint;
+        crouchAction = playerInputActionAsset.Player.Crouch;
+
+        moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        moveAction.canceled += ctx => moveInput = Vector2.zero;
+
+        lookAction.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
+        lookAction.canceled += ctx => lookInput = Vector2.zero;
+    }
     private void OnEnable()
     {
+        playerInputActionAsset.Enable();
+
+        moveAction.Enable();
+        lookAction.Enable();
+        jumpAction.Enable();
+        sprintAction.Enable();
+        crouchAction.Enable();
+
         characterController = GetComponent<CharacterController>();
         fpCamera = Camera.main;
     }
     private void OnDisable()
     {
-        
+        moveAction.Disable();
+        lookAction.Disable();
+        jumpAction.Disable();
+        sprintAction.Disable();
+        crouchAction.Disable();
     }
     private void Start()
     {
@@ -87,8 +115,6 @@ public class FPS_Controller : MonoBehaviour
     }
     private void Update()
     {
-        Magnitude = characterController.velocity.magnitude;
-
         if (CanMoveJump) HandleMovement();
 
         if (CanCrouch) HandleCrouching();
@@ -100,13 +126,10 @@ public class FPS_Controller : MonoBehaviour
 
     private void HandleMovement()
     {
-        float verticalInput = Input.GetAxis(verticalMoveInput);
-        float horizontalInput = Input.GetAxis(horizontalMoveInput);
+        float speedMutiplier = isCrouching ? 1.0f : sprintAction.ReadValue<float>() > 0 ? sprintMultiplier : 1.0f;
 
-        float speedMutiplier = isCrouching ? 1.0f : Input.GetKey(sprintKey) ? sprintMultiplier : 1.0f;
-
-        float horizontalSpeed = horizontalInput * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
-        float verticalSpeed = verticalInput * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
+        float horizontalSpeed = moveInput.x * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
+        float verticalSpeed = moveInput.y * (isCrouching ? crouchSpeed : walkSpeed) * speedMutiplier;
 
         Vector3 horizontalMovement = new Vector3 (horizontalSpeed, 0, verticalSpeed);
         horizontalMovement = transform.rotation * horizontalMovement;
@@ -119,7 +142,7 @@ public class FPS_Controller : MonoBehaviour
 
         characterController.Move(currentMovement * Time.deltaTime);
 
-        isMoving = verticalInput != 0 || horizontalInput != 0;
+        isMoving = moveInput.y != 0 || moveInput.x != 0;
     }
     private void HandleGravityAndJumping() 
     {
@@ -127,7 +150,7 @@ public class FPS_Controller : MonoBehaviour
         {
             currentMovement.y = -0.5f;
 
-            if (!Physics.Raycast(fpCamera.transform.position, Vector3.up, 1) && Input.GetKey(jumpKey))
+            if (!Physics.Raycast(fpCamera.transform.position, Vector3.up, 1) && jumpAction.triggered)
             {
                 currentMovement.y = jumpForce;
             }
@@ -175,16 +198,16 @@ public class FPS_Controller : MonoBehaviour
     }
     private void HandleRotation()
     {
-        float mouseXRotation = Input.GetAxis(mouseXInput) * mouseSensitivity;
+        float mouseXRotation = lookInput.x * mouseSensitivity;
         transform.Rotate(0, mouseXRotation, 0);
 
-        verticalRotation -= Input.GetAxis(mouseYInput) * mouseSensitivity;
+        verticalRotation -= lookInput.y * mouseSensitivity;
         verticalRotation = Mathf.Clamp(verticalRotation, -upDownClampRange, upDownClampRange);
         fpCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
     }
     private void HandleFootsteps()
     {
-        float currentStepInterval = ( isCrouching ? crouchStepInterval : Input.GetKey(sprintKey) ? sprintStepInterval : walksStepInterval);
+        float currentStepInterval = ( isCrouching ? crouchStepInterval : sprintAction.ReadValue<float>() > 0 ? sprintStepInterval : walksStepInterval);
 
         if (characterController.isGrounded && isMoving && Time.time > nextStepTime && characterController.velocity.magnitude > velocityThreshold)
         {
