@@ -23,9 +23,7 @@ public class InputHandle : MonoBehaviour
     #endregion
 
     public Vector2 MoveInput {  get; private set; }
-    public bool IsMoving { get; private set; }
     public Vector2 LookInput { get; private set; }
-    public bool IsLooking { get; private set; }
     public bool SprintTriggered { get; private set; }
     public bool JumpTriggered { get; private set; }
     public bool CrouchTriggered { get; private set; }
@@ -97,25 +95,21 @@ public class InputHandle : MonoBehaviour
     private void onMove(InputAction.CallbackContext ctx)
     {
         MoveInput = ctx.ReadValue<Vector2>();
-        IsMoving = true;
     }
 
     private void onMoveCanceled(InputAction.CallbackContext ctx)
     {
         MoveInput = Vector2.zero;
-        IsMoving = false;
     }
 
     private void onLook(InputAction.CallbackContext ctx)
     {
         LookInput = ctx.ReadValue<Vector2>();
-        IsLooking = true;
     }
 
     private void onLookCanceled(InputAction.CallbackContext ctx)
     {
         LookInput = Vector2.zero;
-        IsLooking = false;
     }
 
     private void onJump(InputAction.CallbackContext ctx)
@@ -140,11 +134,11 @@ public class InputHandle : MonoBehaviour
 
     private void onCrouch(InputAction.CallbackContext ctx)
     {
-        CrouchTriggered = true;
+        CrouchTriggered = CrouchTriggered ? false : true;
     }
 
     private void onCrouchCanceled(InputAction.CallbackContext ctx)
     {
-        CrouchTriggered = false;
+        //CrouchTriggered = false;
     }
 }
