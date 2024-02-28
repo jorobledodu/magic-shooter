@@ -14,7 +14,7 @@ public class InputHandle : MonoBehaviour
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
-    private InputAction sprintAction;
+    private InputAction runAction;
     private InputAction crouchAction;
     #endregion
 
@@ -22,11 +22,11 @@ public class InputHandle : MonoBehaviour
     private InputAction pauseAction;
     #endregion
 
-    public Vector2 MoveInput {  get; private set; }
-    public Vector2 LookInput { get; private set; }
-    public bool SprintTriggered { get; private set; }
+    public Vector2 MoveInput;
+    public Vector2 LookInput {  get; private set; }
+    public bool RunTriggered { get; private set; }
     public bool JumpTriggered { get; private set; }
-    public bool CrouchTriggered { get; private set; }
+    public bool CrouchTriggered;
 
 
     private void Awake()
@@ -48,7 +48,7 @@ public class InputHandle : MonoBehaviour
         moveAction = playerInputActionAsset.Player.Move;
         lookAction = playerInputActionAsset.Player.Look;
         jumpAction = playerInputActionAsset.Player.Jump;
-        sprintAction = playerInputActionAsset.Player.Sprint;
+        runAction = playerInputActionAsset.Player.Run;
         crouchAction = playerInputActionAsset.Player.Crouch;
 
         RegisterInputs();
@@ -60,7 +60,7 @@ public class InputHandle : MonoBehaviour
         moveAction.Enable(); 
         lookAction.Enable();
         jumpAction.Enable();
-        sprintAction.Enable();
+        runAction.Enable();
         crouchAction.Enable();
     }
     private void OnDisable()
@@ -70,7 +70,7 @@ public class InputHandle : MonoBehaviour
         moveAction.Disable();
         lookAction.Disable();
         jumpAction.Disable();
-        sprintAction.Disable();
+        runAction.Disable();
         crouchAction.Disable();
     }
 
@@ -85,8 +85,8 @@ public class InputHandle : MonoBehaviour
         jumpAction.performed += onJump;
         jumpAction.canceled += onJumpCanceled;
 
-        sprintAction.performed += onSprint;
-        sprintAction.canceled += onSprintCanceled;
+        runAction.performed += onRun;
+        runAction.canceled += onRunCanceled;
 
         crouchAction.performed += onCrouch;
         crouchAction.canceled += onCrouchCanceled;
@@ -99,7 +99,7 @@ public class InputHandle : MonoBehaviour
 
     private void onMoveCanceled(InputAction.CallbackContext ctx)
     {
-        MoveInput = Vector2.zero;
+        MoveInput = ctx.ReadValue<Vector2>();
     }
 
     private void onLook(InputAction.CallbackContext ctx)
@@ -109,7 +109,7 @@ public class InputHandle : MonoBehaviour
 
     private void onLookCanceled(InputAction.CallbackContext ctx)
     {
-        LookInput = Vector2.zero;
+        LookInput = ctx.ReadValue<Vector2>();
     }
 
     private void onJump(InputAction.CallbackContext ctx)
@@ -122,23 +122,24 @@ public class InputHandle : MonoBehaviour
         JumpTriggered = false;
     }
 
-    private void onSprint(InputAction.CallbackContext ctx)
+    private void onRun(InputAction.CallbackContext ctx)
     {
-        SprintTriggered = true;
+        RunTriggered = true;
     }
 
-    private void onSprintCanceled(InputAction.CallbackContext ctx)
+    private void onRunCanceled(InputAction.CallbackContext ctx)
     {
-        SprintTriggered = false;
+        RunTriggered = false;
     }
 
     private void onCrouch(InputAction.CallbackContext ctx)
     {
-        CrouchTriggered = CrouchTriggered ? false : true;
+        //CrouchTriggered = !CrouchTriggered;
+        CrouchTriggered = true;
     }
 
     private void onCrouchCanceled(InputAction.CallbackContext ctx)
     {
-        //CrouchTriggered = false;
+        CrouchTriggered = false;
     }
 }

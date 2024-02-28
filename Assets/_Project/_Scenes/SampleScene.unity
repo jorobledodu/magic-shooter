@@ -1035,8 +1035,8 @@ GameObject:
   m_Component:
   - component: {fileID: 670037721}
   - component: {fileID: 670037720}
-  - component: {fileID: 670037723}
   - component: {fileID: 670037722}
+  - component: {fileID: 670037723}
   m_Layer: 0
   m_Name: FPSCharacter
   m_TagString: Untagged
@@ -1195,36 +1195,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7df52c8d70af7a4bbedb3a6929cad2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCrouching: 0
   walkSpeed: 3
+  runSpeed: 6
   crouchSpeed: 1.5
-  sprintMultiplier: 2
-  isMoving: 0
-  canCrouch: 1
+  slowSpeed: 1
+  lookSpeedHorizontal: 2
+  lookSpeedVertical: 2
+  upperLookLimit: 75
+  lowerLookLimit: 70
+  jumpForce: 8
+  gravity: 30
   crouchHeight: 0.5
   standingHeight: 2
   timeToCrouch: 0.25
   crouchingCenter: {x: 0, y: 0.5, z: 0}
   standingCenter: {x: 0, y: 0, z: 0}
-  jumpForce: 4
-  groundedDawnForce: -3
-  gravity: 12
-  canJump: 1
-  sensitivity: 2
-  upDownClampRange: 60
-  isLooking: 0
-  currentMovement: {x: 0, y: 0, z: 0}
-  isGrounded: 0
-  grounSlopeAngle: 0
-  sphereCastMaxDistance: 0.9
-  sphereRadius: 0.3
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  actualGround: 
-  concreteTag: Ground/Concrete
-  woodTag: Ground/Wood
-  waterTag: Ground/Water
 --- !u!1 &679979935
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,7 +1573,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 830134984}
-  - component: {fileID: 830134983}
+  - component: {fileID: 830134985}
   m_Layer: 0
   m_Name: InputHandle
   m_TagString: Untagged
@@ -1596,18 +1581,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &830134983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 830134982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 542d5dd2196d1634d97bfdf890443487, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &830134984
 Transform:
   m_ObjectHideFlags: 0
@@ -1623,6 +1596,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &830134985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830134982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 542d5dd2196d1634d97bfdf890443487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MoveInput: {x: 0, y: 0}
+  CrouchTriggered: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
