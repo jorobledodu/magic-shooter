@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class FP_Controller : MonoBehaviour
 {
-    public bool CanMove { get; set; }
-    public bool CanCrouch {  get; set; }
-    public bool CanRun { get; set;}
-    public bool CanJump {  get; set; }
+    public bool CanMove { get; set; } = true;
+    public bool CanCrouch { get; set; } = true;
+    public bool CanRun { get; set; } = true;
+    public bool CanJump { get; set; } = true;
     private bool ShouldRun => CanRun && _inputHandle.RunTriggered;
     private bool ShouldCrouch => _inputHandle.CrouchTriggered && !duringCrouchingAnimation && _characterController.isGrounded;
     private bool ShouldJump => _inputHandle.JumpTriggered && _characterController.isGrounded;
@@ -120,6 +120,10 @@ public class FP_Controller : MonoBehaviour
         if (ShouldJump && !isCrouching)
         {
             moveDirecton.y = jumpForce;
+        }
+        else if (ShouldJump && isCrouching)
+        {
+            StartCoroutine(CrouchStand());
         }
     }
     private void HandleCrouch()
