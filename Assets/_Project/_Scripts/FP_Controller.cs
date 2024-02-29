@@ -37,6 +37,9 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
     [SerializeField] private Vector3 standingCenter = new Vector3(0, 0, 0);
 
+    [Header("Headbob Parametres")]
+    [SerializeField] private bool canUseHeadbob = true;
+    [SerializeField] private float walkBobSpeed = 14f;
 
     ///Variables
     //Movemnt
@@ -117,14 +120,16 @@ public class FP_Controller : MonoBehaviour
     }
     private void HandleJump()
     {
-        if (ShouldJump && !isCrouching)
+        if (ShouldJump && !Physics.Raycast(_fpCamera.transform.position, Vector3.up, 1f) && !isCrouching)
         {
             moveDirecton.y = jumpForce;
         }
-        else if (ShouldJump && isCrouching)
-        {
-            StartCoroutine(CrouchStand());
-        }
+        /// Si le da al espacio estando "crouching" en vez de saltar o no hacer nada, hacer que se levante 
+        //else if (ShouldJump && isCrouching)
+        //{
+        //    StartCoroutine(CrouchStand());
+        //    isCrouching = false;
+        //}
     }
     private void HandleCrouch()
     {
