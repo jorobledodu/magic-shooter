@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FP_Controller : MonoBehaviour
@@ -17,7 +15,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float walkSpeed = 3.0f;
     [SerializeField] private float runSpeed = 6.0f; //No es necesario modificarlos ya que se calculan por equaciones
     [SerializeField] private float crouchSpeed = 1.5f; //No es necesario modificarlos ya que se calculan por equaciones
-    [SerializeField] private float slowSpeed = 1.0f; //No es necesario modificarlos ya que se calculan por equaciones
+    [SerializeField] private float slowedSpeed = 1.0f; //No es necesario modificarlos ya que se calculan por equaciones
 
 
     [Header("Look Parametres")]
@@ -40,6 +38,27 @@ public class FP_Controller : MonoBehaviour
     [Header("Headbob Parametres")]
     [SerializeField] private bool canUseHeadbob = true;
     [SerializeField] private float walkBobSpeed = 14f;
+    [SerializeField] private float walkBobAmount = 0.05f;
+    [SerializeField] private float runBobSpeed = 18f;
+    [SerializeField] private float runBobAmount = 0.1f;
+    [SerializeField] private float crouchBobSpeed = 8f;
+    [SerializeField] private float crouchBobAmount = 0.025f;
+    [SerializeField] private float slowedBobSpeed = 4f;
+    [SerializeField] private float slowedBobAmount = 0.015f;
+
+    [Header("Footsteps Parametres")]
+    [SerializeField] private bool useFootsteps = true;
+    [SerializeField] private float baseStepsSpeed = 0.5f;
+    [SerializeField] private float crouchStepMultipler = 1.5f;
+    [SerializeField] private float runStepMultipler = 0.6f;
+    [SerializeField] private float slowedStepMultipler = 1.8f;
+    [SerializeField] private AudioSource footstepAudioSource = default;
+    [SerializeField] private string concreteTag;
+    [SerializeField] private AudioClip[] concreteStepsClips = default;
+    [SerializeField] private string woodTag;
+    [SerializeField] private AudioClip[] woodStepsClips = default;
+    [SerializeField] private string wetTag;
+    [SerializeField] private AudioClip[] wetStepsClips = default;
 
     ///Variables
     //Movemnt
@@ -56,6 +75,14 @@ public class FP_Controller : MonoBehaviour
     private bool isCrouching;
     private bool duringCrouchingAnimation;
 
+    //Headbob
+    private float defaultYPos = 0;
+    private float timer;
+
+    //Footsteps
+    private float footstepsTimer = 0;
+    private float GetCurrentOffset => (isSlowed ? baseStepsSpeed * slowedStepMultipler : isCrouching ? baseStepsSpeed * crouchStepMultipler : isRuning ? baseStepsSpeed * runStepMultipler : baseStepsSpeed);
+
     ///References
     private InputHandle _inputHandle;
     private Camera _fpCamera;
@@ -65,6 +92,8 @@ public class FP_Controller : MonoBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _fpCamera = Camera.main;
+
+        defaultYPos = _fpCamera.transform.localPosition.y;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -76,7 +105,7 @@ public class FP_Controller : MonoBehaviour
 
         runSpeed = walkSpeed * 2;
         crouchSpeed = walkSpeed / 2;
-        slowSpeed = walkSpeed / 3;
+        slowedSpeed = walkSpeed / 3;
     }
 
     private void Update()
@@ -94,6 +123,14 @@ public class FP_Controller : MonoBehaviour
             {
                 HandleCrouch();
             }
+            if (canUseHeadbob)
+            {
+                HandleHeadbob();
+            }
+            if (useFootsteps)
+            {
+                HandleFootsteps();
+            }
 
             ApplyFinalMovements();
         }
@@ -101,7 +138,7 @@ public class FP_Controller : MonoBehaviour
 
     private void HandleMovementInput()
     {
-        velocityMultiplicator = isSlowed ? slowSpeed : isCrouching ? crouchSpeed : ShouldRun ? runSpeed : walkSpeed;
+        velocityMultiplicator = isSlowed ? slowedSpeed : isCrouching ? crouchSpeed : ShouldRun ? runSpeed : walkSpeed;
 
         isRuning = velocityMultiplicator == runSpeed ? true : false; 
 
@@ -140,7 +177,7 @@ public class FP_Controller : MonoBehaviour
     }
     private IEnumerator CrouchStand()
     {
-        if (isCrouching && Physics.Raycast(_fpCamera.transform.position, Vector3.up, 1f)) 
+        if (isCrouching && Physics.Raycast(_fpCamera.transform.position, Vector3.up, 1.5f)) 
             yield break;
 
         duringCrouchingAnimation = true;
@@ -165,6 +202,56 @@ public class FP_Controller : MonoBehaviour
         isCrouching = !isCrouching;
 
         duringCrouchingAnimation = false;
+    }
+    private void HandleHeadbob()
+    {
+        if (!_characterController.isGrounded) return;
+
+        if (Mathf.Abs(moveDirecton.x) > 0.1f || Mathf.Abs(moveDirecton.z) > 0.1f)
+        {
+            timer += Time.deltaTime * (isSlowed ? slowedBobSpeed : isCrouching ? crouchBobSpeed : isRuning ? runBobSpeed : walkBobSpeed);
+            _fpCamera.transform.localPosition = new Vector3(_fpCamera.transform.localPosition.x, 
+                defaultYPos + Mathf.Sin(timer) * (isSlowed ? slowedBobAmount : isCrouching ? crouchBobAmount : isRuning ? runBobAmount : walkBobAmount), 
+                _fpCamera.transform.localPosition.z);
+        }
+        else
+        {
+            timer = 0;
+            _fpCamera.transform.localPosition = new Vector3(_fpCamera.transform.localPosition.x, 
+                Mathf.Lerp(_fpCamera.transform.localPosition.y, defaultYPos, Time.deltaTime * (isSlowed ? slowedBobAmount : isCrouching ? crouchBobAmount : isRuning ? runBobAmount : walkBobAmount)), 
+                _fpCamera.transform.localPosition.z);
+        }
+    }
+    private void HandleFootsteps()
+    {
+        if (!_characterController.isGrounded) return;
+        if (currentInput == Vector2.zero) return;
+
+        footstepsTimer -= Time.deltaTime;
+
+        if (footstepsTimer <= 0)
+        {
+            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 10.0f))
+            {
+                switch (hit.collider.tag)
+                {
+                    case "Floor/Concrete":
+                        footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
+                        break;
+                    case "Floor/Wood":
+                        footstepAudioSource.PlayOneShot(woodStepsClips[Random.Range(0, woodStepsClips.Length - 1)]);
+                        break;
+                    case "Floor/Wet":
+                        footstepAudioSource.PlayOneShot(wetStepsClips[Random.Range(0, wetStepsClips.Length - 1)]);
+                        Debug.Log("wet steps");
+                        break;
+                    default: 
+                        break;
+                }
+            }
+
+            footstepsTimer = GetCurrentOffset;
+        }
     }
     private void ApplyFinalMovements()
     {
