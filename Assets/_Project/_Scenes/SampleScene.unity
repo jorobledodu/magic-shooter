@@ -1326,10 +1326,11 @@ MonoBehaviour:
   slowedBobSpeed: 4
   slowedBobAmount: 0.015
   useFootsteps: 1
-  baseStepsSpeed: 0.5
-  crouchStepMultipler: 1.5
-  runStepMultipler: 0.6
-  slowedStepMultipler: 1.8
+  walksStepInterval: 0.5
+  runStepInterval: 0.3
+  crouchStepInterval: 0.8
+  slowedStepInterval: 1
+  velocityThreshold: 2
   footstepAudioSource: {fileID: 670037722}
   concreteTag: 
   concreteStepsClips:
@@ -1355,6 +1356,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c30ef530a8968cd459946a6b690c1db4, type: 3}
   - {fileID: 8300000, guid: 177c5bd6a06d3494d9b6d265d7be022d, type: 3}
   - {fileID: 8300000, guid: 40ea62d77b4e7d34fbaca785bae81392, type: 3}
+  isMoving: 0
+  isRuning: 0
+  isSlowed: 0
 --- !u!1 &679979935
 GameObject:
   m_ObjectHideFlags: 0

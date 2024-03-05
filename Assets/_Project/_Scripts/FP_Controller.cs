@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class FP_Controller : MonoBehaviour
 {
+    //Condicionales
     public bool CanMove { get; set; } = true;
     public bool CanCrouch { get; set; } = true;
     public bool CanRun { get; set; } = true;
     public bool CanJump { get; set; } = true;
+
     private bool ShouldRun => CanRun && _inputHandle.RunTriggered;
     private bool ShouldCrouch => _inputHandle.CrouchTriggered && !duringCrouchingAnimation && _characterController.isGrounded;
     private bool ShouldJump => _inputHandle.JumpTriggered && _characterController.isGrounded;
@@ -48,16 +50,13 @@ public class FP_Controller : MonoBehaviour
 
     [Header("Footsteps Parametres")]
     [SerializeField] private bool useFootsteps = true;
-    [SerializeField] private float baseStepsSpeed = 0.5f;
+    [SerializeField] private float baseStepSpeed = 0.5f;
     [SerializeField] private float crouchStepMultipler = 1.5f;
     [SerializeField] private float runStepMultipler = 0.6f;
     [SerializeField] private float slowedStepMultipler = 1.8f;
     [SerializeField] private AudioSource footstepAudioSource = default;
-    [SerializeField] private string concreteTag;
     [SerializeField] private AudioClip[] concreteStepsClips = default;
-    [SerializeField] private string woodTag;
     [SerializeField] private AudioClip[] woodStepsClips = default;
-    [SerializeField] private string wetTag;
     [SerializeField] private AudioClip[] wetStepsClips = default;
 
     ///Variables
@@ -65,8 +64,9 @@ public class FP_Controller : MonoBehaviour
     private float velocityMultiplicator;
     private Vector3 moveDirecton;
     private Vector2 currentInput;
-    private bool isRuning = false;
-    private bool isSlowed = false;
+    public bool isMoving = false;
+    public bool isRuning = false;
+    public bool isSlowed = false;
 
     //Look
     private float rotationX = 0f;
@@ -79,9 +79,9 @@ public class FP_Controller : MonoBehaviour
     private float defaultYPos = 0;
     private float timer;
 
-    //Footsteps
-    private float footstepsTimer = 0;
-    private float GetCurrentOffset => (isSlowed ? baseStepsSpeed * slowedStepMultipler : isCrouching ? baseStepsSpeed * crouchStepMultipler : isRuning ? baseStepsSpeed * runStepMultipler : baseStepsSpeed);
+    //Footstep
+    private float footstepTimer = 0f;
+    private float GetCurrentOffset => isSlowed ? baseStepSpeed * slowedStepMultipler : isCrouching ? baseStepSpeed * crouchStepMultipler : isRuning ? baseStepSpeed * runStepMultipler : baseStepSpeed;
 
     ///References
     private InputHandle _inputHandle;
@@ -147,6 +147,8 @@ public class FP_Controller : MonoBehaviour
         float moveDirectionY = moveDirecton.y;
         moveDirecton = (transform.TransformDirection(Vector3.forward) * currentInput.x) + (transform.TransformDirection(Vector3.right) * currentInput.y);
         moveDirecton.y = moveDirectionY;
+
+        isMoving = currentInput.x != 0 || currentInput.y != 0;
     }
     private void HandleMouseLook()
     {
@@ -217,22 +219,22 @@ public class FP_Controller : MonoBehaviour
         else
         {
             timer = 0;
-            _fpCamera.transform.localPosition = new Vector3(_fpCamera.transform.localPosition.x, 
-                Mathf.Lerp(_fpCamera.transform.localPosition.y, defaultYPos, Time.deltaTime * (isSlowed ? slowedBobAmount : isCrouching ? crouchBobAmount : isRuning ? runBobAmount : walkBobAmount)), 
-                _fpCamera.transform.localPosition.z);
         }
     }
     private void HandleFootsteps()
     {
         if (!_characterController.isGrounded) return;
-        if (currentInput == Vector2.zero) return;
+        if (!isMoving) return;
 
-        footstepsTimer -= Time.deltaTime;
+        footstepTimer -= Time.deltaTime;
 
-        if (footstepsTimer <= 0)
+        if (footstepTimer <= 0)
         {
-            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 10.0f))
+            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 3))
             {
+                //Bug to fix: cuando corres por encima de un tipo de suelo y debajo hay otro diferente a veces suena el sonido del suelo de debajo no el de arriba (esta mal)
+                //Creo que este bug es que como la camara sube y baja mas al correr, cuando baja el raycast toca el suelo de abajo y lo detecta
+                //Solucion teorica (no se como solucionarlo) hacer que el raycast no sea hasta la distancia especifica si no que se pare en la primera colision 
                 switch (hit.collider.tag)
                 {
                     case "Floor/Concrete":
@@ -243,14 +245,14 @@ public class FP_Controller : MonoBehaviour
                         break;
                     case "Floor/Wet":
                         footstepAudioSource.PlayOneShot(wetStepsClips[Random.Range(0, wetStepsClips.Length - 1)]);
-                        Debug.Log("wet steps");
                         break;
-                    default: 
+                    default:
+                        footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
                         break;
                 }
             }
 
-            footstepsTimer = GetCurrentOffset;
+            footstepTimer = GetCurrentOffset;
         }
     }
     private void ApplyFinalMovements()
