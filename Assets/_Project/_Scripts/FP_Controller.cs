@@ -50,6 +50,7 @@ public class FP_Controller : MonoBehaviour
 
     [Header("Footsteps Parametres")]
     [SerializeField] private bool useFootsteps = true;
+    [SerializeField] private LayerMask floorLayer;
     [SerializeField] private float baseStepSpeed = 0.5f;
     [SerializeField] private float crouchStepMultipler = 1.5f;
     [SerializeField] private float runStepMultipler = 0.6f;
@@ -230,24 +231,25 @@ public class FP_Controller : MonoBehaviour
 
         if (footstepTimer <= 0)
         {
-            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 3))
+            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer))
             {
-                //Bug to fix: cuando corres por encima de un tipo de suelo y debajo hay otro diferente a veces suena el sonido del suelo de debajo no el de arriba (esta mal)
-                //Creo que este bug es que como la camara sube y baja mas al correr, cuando baja el raycast toca el suelo de abajo y lo detecta
-                //Solucion teorica (no se como solucionarlo) hacer que el raycast no sea hasta la distancia especifica si no que se pare en la primera colision 
                 switch (hit.collider.tag)
                 {
                     case "Floor/Concrete":
                         footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
+                        Debug.Log(hit.collider.tag);
                         break;
                     case "Floor/Wood":
                         footstepAudioSource.PlayOneShot(woodStepsClips[Random.Range(0, woodStepsClips.Length - 1)]);
+                        Debug.Log(hit.collider.tag);
                         break;
                     case "Floor/Wet":
                         footstepAudioSource.PlayOneShot(wetStepsClips[Random.Range(0, wetStepsClips.Length - 1)]);
+                        Debug.Log(hit.collider.tag);
                         break;
                     default:
                         footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
+                        Debug.Log(hit.collider.tag);
                         break;
                 }
             }
