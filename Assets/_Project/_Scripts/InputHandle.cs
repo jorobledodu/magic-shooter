@@ -16,17 +16,20 @@ public class InputHandle : MonoBehaviour
     private InputAction jumpAction;
     private InputAction runAction;
     private InputAction crouchAction;
+    private InputAction interactionAction;
     #endregion
 
     #region UI InputAction Reference
     private InputAction pauseAction;
     #endregion
 
+
     public Vector2 MoveInput;
     public Vector2 LookInput {  get; private set; }
     public bool RunTriggered { get; private set; }
     public bool JumpTriggered { get; private set; }
-    public bool CrouchTriggered;
+    public bool CrouchTriggered { get; private set; }
+    public bool InteractionTriggered {  get; private set; }
 
 
     private void Awake()
@@ -50,6 +53,7 @@ public class InputHandle : MonoBehaviour
         jumpAction = playerInputActionAsset.Player.Jump;
         runAction = playerInputActionAsset.Player.Run;
         crouchAction = playerInputActionAsset.Player.Crouch;
+        interactionAction = playerInputActionAsset.Player.Interaction;
 
         RegisterInputs();
     }
@@ -62,6 +66,7 @@ public class InputHandle : MonoBehaviour
         jumpAction.Enable();
         runAction.Enable();
         crouchAction.Enable();
+        interactionAction.Enable();
     }
     private void OnDisable()
     {
@@ -72,6 +77,7 @@ public class InputHandle : MonoBehaviour
         jumpAction.Disable();
         runAction.Disable();
         crouchAction.Disable();
+        interactionAction.Disable();
     }
 
     private void RegisterInputs()
@@ -90,6 +96,9 @@ public class InputHandle : MonoBehaviour
 
         crouchAction.performed += onCrouch;
         crouchAction.canceled += onCrouchCanceled;
+
+        interactionAction.performed += onInteraction;
+        interactionAction.canceled += onInteractionCanceled;
     }
 
     private void onMove(InputAction.CallbackContext ctx)
@@ -141,5 +150,15 @@ public class InputHandle : MonoBehaviour
     private void onCrouchCanceled(InputAction.CallbackContext ctx)
     {
         CrouchTriggered = false;
+    }
+
+    private void onInteraction(InputAction.CallbackContext context)
+    {
+        InteractionTriggered = true;
+    }
+
+    private void onInteractionCanceled(InputAction.CallbackContext context)
+    {
+        InteractionTriggered = false;
     }
 }

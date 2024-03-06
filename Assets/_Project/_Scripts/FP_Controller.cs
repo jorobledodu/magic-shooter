@@ -8,6 +8,7 @@ public class FP_Controller : MonoBehaviour
     public bool CanCrouch { get; set; } = true;
     public bool CanRun { get; set; } = true;
     public bool CanJump { get; set; } = true;
+    public bool CanInteract {  get; set; } = true;
 
     private bool ShouldRun => CanRun && _inputHandle.RunTriggered;
     private bool ShouldCrouch => _inputHandle.CrouchTriggered && !duringCrouchingAnimation && _characterController.isGrounded;
@@ -59,6 +60,12 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private AudioClip[] concreteStepsClips = default;
     [SerializeField] private AudioClip[] woodStepsClips = default;
     [SerializeField] private AudioClip[] wetStepsClips = default;
+
+    [Header("Interaction")]
+    [SerializeField] private Vector3 interactionRayPoint = default;
+    [SerializeField] private float interactionDistance = default;
+    [SerializeField] private LayerMask interactionLayer = default;
+    private Interactable currentInteractable;
 
     ///Variables
     //Movemnt
@@ -116,14 +123,6 @@ public class FP_Controller : MonoBehaviour
             HandleMovementInput();
             HandleMouseLook();
 
-            if (CanJump)
-            {
-                HandleJump();
-            }
-            if (CanCrouch)
-            {
-                HandleCrouch();
-            }
             if (canUseHeadbob)
             {
                 HandleHeadbob();
@@ -134,6 +133,19 @@ public class FP_Controller : MonoBehaviour
             }
 
             ApplyFinalMovements();
+        }
+        if (CanJump)
+        {
+            HandleJump();
+        }
+        if (CanCrouch)
+        {
+            HandleCrouch();
+        }
+        if (CanInteract)
+        {
+            HandleInteractionCheck();
+            HandleInteractionInput();
         }
     }
 
@@ -256,6 +268,17 @@ public class FP_Controller : MonoBehaviour
 
             footstepTimer = GetCurrentOffset;
         }
+    }
+    private void HandleInteractionCheck()
+    {
+
+    }
+    private void HandleInteractionInput()
+    {
+        //if (_inputHandle.InteractionTriggered && currentInteractable != null && Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit))
+        //{
+
+        //}
     }
     private void ApplyFinalMovements()
     {
