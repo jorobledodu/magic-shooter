@@ -249,19 +249,15 @@ public class FP_Controller : MonoBehaviour
                 {
                     case "Floor/Concrete":
                         footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
-                        Debug.Log(hit.collider.tag);
                         break;
                     case "Floor/Wood":
                         footstepAudioSource.PlayOneShot(woodStepsClips[Random.Range(0, woodStepsClips.Length - 1)]);
-                        Debug.Log(hit.collider.tag);
                         break;
                     case "Floor/Wet":
                         footstepAudioSource.PlayOneShot(wetStepsClips[Random.Range(0, wetStepsClips.Length - 1)]);
-                        Debug.Log(hit.collider.tag);
                         break;
                     default:
                         footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
-                        Debug.Log(hit.collider.tag);
                         break;
                 }
             }
@@ -271,14 +267,37 @@ public class FP_Controller : MonoBehaviour
     }
     private void HandleInteractionCheck()
     {
+        //Condicion if: raycast hace hit 
+        if (Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance))
+        {
+            //Condicion if: si el objeto contra el que colisiona el raycast esta en la layer 8 (interactable layer) entra en estado de focus (estamos mirando un objeto interactuable)
+            //Explicacion parte InstanceID: esto sirve para que si el objeto que estas mirando no es el mismo que hay almacenado en el currentInteractable lo sustituya por el Interactable del que estas mirando
+            if (hit.collider.gameObject.layer == 8 && (currentInteractable == null || hit.collider.gameObject.GetInstanceID() != currentInteractable.gameObject.GetInstanceID()))
+            {
+                //Add: cuando mires un objeto interactuable, en la mirilla saldra un circulo o habra una forma de feedback para el jugador
 
+                hit.collider.TryGetComponent(out currentInteractable);
+
+                if (currentInteractable) 
+                    currentInteractable.OnFocus();
+            }
+        }
+        //Condicion else if: si estabamos mirando un objeto interactuable y el raycast ya no hace hit, entramos en estado on lose focus (hemos dejado de mirar un objeto interactuable)
+        else if (currentInteractable)
+        {
+            //Add: pierde el feedback de que estas mirando algo interactuable
+
+            currentInteractable.OnLoseFocus();
+            currentInteractable = null;
+        }
     }
     private void HandleInteractionInput()
     {
-        //if (_inputHandle.InteractionTriggered && currentInteractable != null && Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit))
-        //{
-
-        //}
+        //Condicion if: si interaction trigger y estamos mirando un objeto interactuable
+        if (_inputHandle.InteractionTriggered && currentInteractable != null && Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
+        {
+            currentInteractable.OnInteract();
+        }
     }
     private void ApplyFinalMovements()
     {
