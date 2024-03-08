@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class Interactable_Door : Interactable
 {
+    private bool isOpen = false;
+    private bool canBeInteractedWith = true;
+    private Animator anim;
+    public Vector3 playerTransformDirection;
+    public Vector3 doorTransformDirection;
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
+
     public override void OnFocus()
     {
         Debug.Log("Looking at " + gameObject.name);
@@ -11,7 +22,20 @@ public class Interactable_Door : Interactable
 
     public override void OnInteract()
     {
-        Debug.Log("Interact with " + gameObject.name);
+        if (canBeInteractedWith)
+        {
+            Debug.Log("Intercted");
+
+            isOpen = !isOpen;
+
+            doorTransformDirection = transform.TransformDirection(Vector3.forward);
+            playerTransformDirection = FP_Controller.instance.transform.position - transform.position;
+            float dot = Vector3.Dot(doorTransformDirection, playerTransformDirection);
+
+            anim.SetFloat("dot", dot);
+            anim.SetBool("isOpen", isOpen);
+
+        }
     }
 
     public override void OnLoseFocus()

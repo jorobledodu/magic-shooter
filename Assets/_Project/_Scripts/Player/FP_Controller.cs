@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FP_Controller : MonoBehaviour
 {
@@ -20,12 +23,23 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float crouchSpeed = 1.5f; //No es necesario modificarlos ya que se calculan por equaciones
     [SerializeField] private float slowedSpeed = 1.0f; //No es necesario modificarlos ya que se calculan por equaciones
 
+    [Header("Life Parametres")]
+    [SerializeField] public float maxHealth = 100.0f;
+    [SerializeField] private float timeBeforeRegenHealth = 3.0f;
+    [SerializeField] private float healthValueIncrement = 1.0f;
+    [SerializeField] private float healthTimeIncrement = 0.1f;
+    public static Action<float> OnTakeDamage;
+    public static Action<float> OnDamage;
+    public static Action<float> OnHeal;
 
     [Header("Look Parametres")]
     [SerializeField] private float lookSpeedHorizontal = 2.0f;
     [SerializeField] private float lookSpeedVertical = 2.0f;
     [SerializeField] private float upperLookLimit = 80.0f;
     [SerializeField] private float lowerLookLimit = 80.0f;
+    [SerializeField] private RawImage actualCrosshairImage;
+    [SerializeField] private Texture2D baseCrosshairImage;
+    [SerializeField] private Texture2D interactCrosshairImage;
 
     [Header("Jumping Parametres")]
     [SerializeField] private float jumpForce = 8.0f;
@@ -65,6 +79,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private Vector3 interactionRayPoint = default;
     [SerializeField] private float interactionDistance = default;
     [SerializeField] private LayerMask interactionLayer = default;
+    [SerializeField] private TextMeshProUGUI interactuarText;
     private Interactable currentInteractable;
 
     ///Variables
@@ -75,6 +90,10 @@ public class FP_Controller : MonoBehaviour
     public bool isMoving = false;
     public bool isRuning = false;
     public bool isSlowed = false;
+
+    //Health
+    private float currentHealth;
+    private Coroutine regeneratingHealth;
 
     //Look
     private float rotationX = 0f;
@@ -95,13 +114,26 @@ public class FP_Controller : MonoBehaviour
     private InputHandle _inputHandle;
     private Camera _fpCamera;
     private CharacterController _characterController;
+    public static FP_Controller instance;
+
+    private void OnEnable()
+    {
+        OnTakeDamage += ApplyDamage;
+    }
+    private void OnDisable()
+    {
+        OnTakeDamage -= ApplyDamage;
+    }
 
     private void Awake()
     {
+        instance = this; 
+
         _characterController = GetComponent<CharacterController>();
         _fpCamera = Camera.main;
 
         defaultYPos = _fpCamera.transform.localPosition.y;
+        currentHealth = maxHealth;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -114,6 +146,8 @@ public class FP_Controller : MonoBehaviour
         runSpeed = walkSpeed * 2;
         crouchSpeed = walkSpeed / 2;
         slowedSpeed = walkSpeed / 3;
+
+        interactuarText.text = "";
     }
 
     private void Update()
@@ -145,9 +179,9 @@ public class FP_Controller : MonoBehaviour
         if (CanInteract)
         {
             HandleInteractionCheck();
-            HandleInteractionInput();
         }
     }
+
 
     private void HandleMovementInput()
     {
@@ -162,6 +196,45 @@ public class FP_Controller : MonoBehaviour
         moveDirecton.y = moveDirectionY;
 
         isMoving = currentInput.x != 0 || currentInput.y != 0;
+    }
+    private void ApplyDamage(float dmg)
+    {
+        currentHealth -= dmg;
+        OnDamage?.Invoke(currentHealth);
+
+        if (currentHealth <= 0)
+            Death();
+        else if (regeneratingHealth != null)
+            StopCoroutine(regeneratingHealth);
+
+        regeneratingHealth = StartCoroutine(RegenerateHealth());
+    }
+    private void Death()
+    {
+        currentHealth = 0;
+
+        if (regeneratingHealth != null)
+            StopCoroutine(RegenerateHealth());
+
+        Debug.Log("DEATH");
+    }
+    private IEnumerator RegenerateHealth()
+    {
+        yield return new WaitForSeconds(timeBeforeRegenHealth);
+        WaitForSeconds timeToWait = new WaitForSeconds(healthTimeIncrement);
+
+        while (currentHealth < maxHealth)
+        {
+            currentHealth += healthValueIncrement;
+
+            if (currentHealth > maxHealth)
+                currentHealth = maxHealth;
+
+            OnHeal?.Invoke(currentHealth);
+            yield return timeToWait;
+        }
+
+        regeneratingHealth = null;
     }
     private void HandleMouseLook()
     {
@@ -248,16 +321,16 @@ public class FP_Controller : MonoBehaviour
                 switch (hit.collider.tag)
                 {
                     case "Floor/Concrete":
-                        footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
+                        footstepAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
                         break;
                     case "Floor/Wood":
-                        footstepAudioSource.PlayOneShot(woodStepsClips[Random.Range(0, woodStepsClips.Length - 1)]);
+                        footstepAudioSource.PlayOneShot(woodStepsClips[UnityEngine.Random.Range(0, woodStepsClips.Length - 1)]);
                         break;
                     case "Floor/Wet":
-                        footstepAudioSource.PlayOneShot(wetStepsClips[Random.Range(0, wetStepsClips.Length - 1)]);
+                        footstepAudioSource.PlayOneShot(wetStepsClips[UnityEngine.Random.Range(0, wetStepsClips.Length - 1)]);
                         break;
                     default:
-                        footstepAudioSource.PlayOneShot(concreteStepsClips[Random.Range(0, concreteStepsClips.Length - 1)]);
+                        footstepAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
                         break;
                 }
             }
@@ -278,8 +351,12 @@ public class FP_Controller : MonoBehaviour
 
                 hit.collider.TryGetComponent(out currentInteractable);
 
-                if (currentInteractable) 
+                if (currentInteractable)
+                {
                     currentInteractable.OnFocus();
+                    interactuarText.text = "F Interactuar"; 
+                    actualCrosshairImage.texture = interactCrosshairImage;
+                }
             }
         }
         //Condicion else if: si estabamos mirando un objeto interactuable y el raycast ya no hace hit, entramos en estado on lose focus (hemos dejado de mirar un objeto interactuable)
@@ -289,12 +366,14 @@ public class FP_Controller : MonoBehaviour
 
             currentInteractable.OnLoseFocus();
             currentInteractable = null;
+            interactuarText.text = "";
+            actualCrosshairImage.texture = baseCrosshairImage;
         }
     }
-    private void HandleInteractionInput()
+    public void HandleInteractionInput()
     {
         //Condicion if: si interaction trigger y estamos mirando un objeto interactuable
-        if (_inputHandle.InteractionTriggered && currentInteractable != null && Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
+        if (currentInteractable != null && Physics.Raycast(_fpCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
         {
             currentInteractable.OnInteract();
         }
