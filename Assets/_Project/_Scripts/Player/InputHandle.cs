@@ -29,8 +29,6 @@ public class InputHandle : MonoBehaviour
     public bool RunTriggered { get; private set; }
     public bool JumpTriggered { get; private set; }
     public bool CrouchTriggered { get; private set; }
-    public bool InteractionTriggered {  get; private set; }
-
 
     private void Awake()
     {
@@ -54,6 +52,8 @@ public class InputHandle : MonoBehaviour
         runAction = playerInputActionAsset.Player.Run;
         crouchAction = playerInputActionAsset.Player.Crouch;
         interactionAction = playerInputActionAsset.Player.Interaction;
+
+        pauseAction = playerInputActionAsset.Player.Pause;
     }
     private void OnEnable()
     {
@@ -65,6 +65,8 @@ public class InputHandle : MonoBehaviour
         runAction.Enable();
         crouchAction.Enable();
         interactionAction.Enable();
+
+        pauseAction.Enable();
 
         SubscribeInputs();
     }
@@ -78,6 +80,8 @@ public class InputHandle : MonoBehaviour
         runAction.Disable();
         crouchAction.Disable();
         interactionAction.Disable();
+
+        pauseAction.Disable();
 
         UnsubscribeInputs();
     }
@@ -100,7 +104,8 @@ public class InputHandle : MonoBehaviour
         crouchAction.canceled += onCrouchCanceled;
 
         interactionAction.performed += onInteraction;
-        //interactionAction.canceled += onInteractionCanceled;
+
+        pauseAction.performed += onPause;
     }
     private void UnsubscribeInputs()
     {
@@ -120,6 +125,13 @@ public class InputHandle : MonoBehaviour
         crouchAction.canceled -= onCrouchCanceled;
 
         interactionAction.performed -= onInteraction;
+
+        pauseAction.performed -= onPause;
+    }
+
+    private void onPause(InputAction.CallbackContext context)
+    {
+        UI.instance.onGamePause();
     }
 
     private void onMove(InputAction.CallbackContext ctx)
@@ -154,7 +166,6 @@ public class InputHandle : MonoBehaviour
 
     private void onRun(InputAction.CallbackContext ctx)
     {
-        Debug.Log("CrouchTrigger");
         RunTriggered = true;
     }
 
@@ -165,7 +176,6 @@ public class InputHandle : MonoBehaviour
 
     private void onCrouch(InputAction.CallbackContext ctx)
     {
-        Debug.Log("CrouchTrigger");
         CrouchTriggered = true;
     }
 

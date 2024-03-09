@@ -8,6 +8,7 @@ public class FP_Controller : MonoBehaviour
 {
     //Condicionales
     public bool CanMove { get; set; } = true;
+    public bool CanLook { get; set; } = true;
     public bool CanCrouch { get; set; } = true;
     public bool CanRun { get; set; } = true;
     public bool CanJump { get; set; } = true;
@@ -155,7 +156,6 @@ public class FP_Controller : MonoBehaviour
         if (CanMove)
         {
             HandleMovementInput();
-            HandleMouseLook();
 
             if (canUseHeadbob)
             {
@@ -167,6 +167,10 @@ public class FP_Controller : MonoBehaviour
             }
 
             ApplyFinalMovements();
+        }
+        if (CanLook)
+        {
+            HandleMouseLook();
         }
         if (CanJump)
         {
