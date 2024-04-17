@@ -15,6 +15,8 @@ public class UI : MonoBehaviour
     {
         FP_Controller.OnDamage += UpdateHealth;
         FP_Controller.OnHeal += UpdateHealth;
+
+        controlesCanvas.SetActive(true);
     }
     private void OnDisable()
     {

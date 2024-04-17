@@ -17,6 +17,7 @@ public class InputHandle : MonoBehaviour
     private InputAction runAction;
     private InputAction crouchAction;
     private InputAction interactionAction;
+    private InputAction shootAction;
     #endregion
 
     #region UI InputAction Reference
@@ -52,6 +53,7 @@ public class InputHandle : MonoBehaviour
         runAction = playerInputActionAsset.Player.Run;
         crouchAction = playerInputActionAsset.Player.Crouch;
         interactionAction = playerInputActionAsset.Player.Interaction;
+        shootAction = playerInputActionAsset.Player.Shoot;
 
         pauseAction = playerInputActionAsset.Player.Pause;
     }
@@ -65,6 +67,7 @@ public class InputHandle : MonoBehaviour
         runAction.Enable();
         crouchAction.Enable();
         interactionAction.Enable();
+        shootAction.Enable();
 
         pauseAction.Enable();
 
@@ -80,6 +83,7 @@ public class InputHandle : MonoBehaviour
         runAction.Disable();
         crouchAction.Disable();
         interactionAction.Disable();
+        shootAction.Disable();
 
         pauseAction.Disable();
 
@@ -105,6 +109,9 @@ public class InputHandle : MonoBehaviour
 
         interactionAction.performed += onInteraction;
 
+        shootAction.performed += onShoot;
+
+
         pauseAction.performed += onPause;
     }
     private void UnsubscribeInputs()
@@ -125,6 +132,9 @@ public class InputHandle : MonoBehaviour
         crouchAction.canceled -= onCrouchCanceled;
 
         interactionAction.performed -= onInteraction;
+
+        shootAction.performed -= onShoot;
+
 
         pauseAction.performed -= onPause;
     }
@@ -189,6 +199,14 @@ public class InputHandle : MonoBehaviour
         if (FP_Controller.instance.CanInteract)
         {
             FP_Controller.instance.HandleInteractionInput();
+        }
+    }
+
+    private void onShoot(InputAction.CallbackContext context)
+    {
+        if (FPS_Controller.instance.CanShoot)
+        {
+            FPS_Controller.instance.Shoot();
         }
     }
 
