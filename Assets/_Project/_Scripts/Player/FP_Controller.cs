@@ -71,7 +71,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float crouchStepMultipler = 1.5f;
     [SerializeField] private float runStepMultipler = 0.6f;
     [SerializeField] private float slowedStepMultipler = 1.8f;
-    [SerializeField] private AudioSource footstepAudioSource = default;
+    [SerializeField] private AudioSource _SFXAudioSource = default;
     [SerializeField] private AudioClip[] concreteStepsClips = default;
     [SerializeField] private AudioClip[] woodStepsClips = default;
     [SerializeField] private AudioClip[] wetStepsClips = default;
@@ -325,16 +325,16 @@ public class FP_Controller : MonoBehaviour
                 switch (hit.collider.tag)
                 {
                     case "Floor/Concrete":
-                        footstepAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
+                        _SFXAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
                         break;
                     case "Floor/Wood":
-                        footstepAudioSource.PlayOneShot(woodStepsClips[UnityEngine.Random.Range(0, woodStepsClips.Length - 1)]);
+                        _SFXAudioSource.PlayOneShot(woodStepsClips[UnityEngine.Random.Range(0, woodStepsClips.Length - 1)]);
                         break;
                     case "Floor/Wet":
-                        footstepAudioSource.PlayOneShot(wetStepsClips[UnityEngine.Random.Range(0, wetStepsClips.Length - 1)]);
+                        _SFXAudioSource.PlayOneShot(wetStepsClips[UnityEngine.Random.Range(0, wetStepsClips.Length - 1)]);
                         break;
                     default:
-                        footstepAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
+                        _SFXAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
                         break;
                 }
             }

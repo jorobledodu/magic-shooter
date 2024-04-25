@@ -18,6 +18,7 @@ public class InputHandle : MonoBehaviour
     private InputAction crouchAction;
     private InputAction interactionAction;
     private InputAction shootAction;
+    private InputAction reloadAction;
     #endregion
 
     #region UI InputAction Reference
@@ -54,6 +55,7 @@ public class InputHandle : MonoBehaviour
         crouchAction = playerInputActionAsset.Player.Crouch;
         interactionAction = playerInputActionAsset.Player.Interaction;
         shootAction = playerInputActionAsset.Player.Shoot;
+        reloadAction = playerInputActionAsset.Player.Reload;
 
         pauseAction = playerInputActionAsset.Player.Pause;
     }
@@ -68,6 +70,7 @@ public class InputHandle : MonoBehaviour
         crouchAction.Enable();
         interactionAction.Enable();
         shootAction.Enable();
+        reloadAction.Enable();
 
         pauseAction.Enable();
 
@@ -84,6 +87,7 @@ public class InputHandle : MonoBehaviour
         crouchAction.Disable();
         interactionAction.Disable();
         shootAction.Disable();
+        reloadAction.Disable();
 
         pauseAction.Disable();
 
@@ -111,6 +115,7 @@ public class InputHandle : MonoBehaviour
 
         shootAction.performed += onShoot;
 
+        reloadAction.performed += onReload;
 
         pauseAction.performed += onPause;
     }
@@ -135,6 +140,7 @@ public class InputHandle : MonoBehaviour
 
         shootAction.performed -= onShoot;
 
+        reloadAction.performed -= onReload;
 
         pauseAction.performed -= onPause;
     }
@@ -201,6 +207,9 @@ public class InputHandle : MonoBehaviour
             FP_Controller.instance.HandleInteractionInput();
         }
     }
+    private void onInteractionCanceled(InputAction.CallbackContext context)
+    {
+    }
 
     private void onShoot(InputAction.CallbackContext context)
     {
@@ -210,8 +219,11 @@ public class InputHandle : MonoBehaviour
         }
     }
 
-    private void onInteractionCanceled(InputAction.CallbackContext context)
+    private void onReload(InputAction.CallbackContext context)
     {
-
+        if (FPS_Controller.instance.CanReload)
+        {
+            FPS_Controller.instance.Reload();
+        }
     }
 }

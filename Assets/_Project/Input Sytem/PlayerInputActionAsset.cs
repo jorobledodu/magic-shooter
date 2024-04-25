@@ -98,20 +98,18 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""9effdf53-5521-4baf-8a4c-de29097bbd51"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""fb840721-3ffd-41d9-8ff9-02562cdd2a5c"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": ""NormalizeVector2"",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": ""2D Vector"",
                     ""id"": ""a0ebb22b-40cb-4f17-a18a-8fbaa6b61688"",
@@ -169,12 +167,12 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                 },
                 {
                     ""name"": """",
-                    ""id"": ""11d46a2b-995e-476f-ac3f-5748ec2ee286"",
-                    ""path"": ""<Gamepad>/rightStick"",
+                    ""id"": ""fb840721-3ffd-41d9-8ff9-02562cdd2a5c"",
+                    ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=1.3,y=1.3),StickDeadzone(min=0.2)"",
+                    ""processors"": ""NormalizeVector2"",
                     ""groups"": """",
-                    ""action"": ""Look"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -191,8 +189,19 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cc9f49e6-d860-4e06-870b-5d5a643c1ec1"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""id"": ""11d46a2b-995e-476f-ac3f-5748ec2ee286"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=1.3,y=1.3),StickDeadzone(min=0.2)"",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf3e8837-a8f1-4275-ae97-e7c02d8f3986"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -202,8 +211,8 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                 },
                 {
                     ""name"": """",
-                    ""id"": ""bf3e8837-a8f1-4275-ae97-e7c02d8f3986"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""id"": ""cc9f49e6-d860-4e06-870b-5d5a643c1ec1"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -235,8 +244,8 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                 },
                 {
                     ""name"": """",
-                    ""id"": ""49f3d0e4-e0e1-41c5-919f-5a6ae4fc09cd"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""id"": ""3305928b-f300-47f0-8218-cd5a1ee3aa59"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -246,8 +255,8 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                 },
                 {
                     ""name"": """",
-                    ""id"": ""3305928b-f300-47f0-8218-cd5a1ee3aa59"",
-                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""id"": ""49f3d0e4-e0e1-41c5-919f-5a6ae4fc09cd"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -329,6 +338,28 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""28ee6d35-bdfb-4b52-8da9-fd02099af3bd"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8371cb4b-f8b0-42a8-bb8d-ea69116de411"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -863,6 +894,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
+        m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -944,6 +976,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Interaction;
     private readonly InputAction m_Player_Shoot;
+    private readonly InputAction m_Player_Reload;
     public struct PlayerActions
     {
         private @PlayerInputActionAsset m_Wrapper;
@@ -956,6 +989,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
+        public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -989,6 +1023,9 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1017,6 +1054,9 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
             @Shoot.canceled -= instance.OnShoot;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1162,6 +1202,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         void OnPause(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
