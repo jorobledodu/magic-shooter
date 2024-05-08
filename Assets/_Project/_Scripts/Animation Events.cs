@@ -23,13 +23,8 @@ public class AnimationEvents : MonoBehaviour
         _muzzleFlash.Play();
     }
 
-    public void EndReloading()
+    public void AIAttackFalse()
     {
-
-    }
-
-    public void EndShoot()
-    {
-
+        _animator.SetBool("isAttaking", false);
     }
 }
