@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(0)]
 public class AIManager : MonoBehaviour
 {
     // Start is called before the first frame update

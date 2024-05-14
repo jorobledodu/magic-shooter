@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[DefaultExecutionOrder(1)]
 public class AIUnit : MonoBehaviour
 {
     private NavMeshAgent agent; 

@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(0)]
 public class InputHandle : MonoBehaviour
 {
     public static InputHandle Instance;
