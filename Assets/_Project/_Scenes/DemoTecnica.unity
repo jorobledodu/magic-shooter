@@ -2761,7 +2761,7 @@ Transform:
   m_GameObject: {fileID: 670037718}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.639999, y: 0.9, z: 1.6300013}
+  m_LocalPosition: {x: 9.12, y: 0.9, z: 2.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6179,7 +6179,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: 0.9
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1700354019
@@ -6194,12 +6194,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d99bc7fa1544e44cb289ff146ca2413, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  textoEstados: {fileID: 0}
-  element: 
+  jugador: {fileID: 670037718}
+  textoEstados: {fileID: 198952476}
+  estadoInicial: 
+  element: Agua
   life: 0
-  rangoVision: 0
-  rangoAtaque: 0
+  rangoVision: 5
+  rangoAtaque: 2.5
+  goPatrulla: 0
+  inRangoVision: 0
+  inRangoAtaque: 0
+  inGolpeado: 0
 --- !u!1 &1705360322
 GameObject:
   m_ObjectHideFlags: 0

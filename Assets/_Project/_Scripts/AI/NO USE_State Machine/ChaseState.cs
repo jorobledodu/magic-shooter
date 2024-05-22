@@ -56,7 +56,7 @@ public class ChaseState : State
     {
         stateText.text = "Chase";
 
-        agent.destination = _AIUnit.player.transform.position;
+        agent.destination = _AIUnit.jugador.transform.position;
 
     }
 }

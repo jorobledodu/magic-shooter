@@ -11,21 +11,19 @@ public class AIUnit : MonoBehaviour
     //Referencias
     private NavMeshAgent agent;
     private Animator animator;
-    public GameObject player;
+    public GameObject jugador;
     public TextMeshPro textoEstados;
 
     //Parametros
 
     //Estadisticas
+    public string estadoInicial; 
     public string element;
     [SerializeField] private float life;
     [SerializeField] private float rangoVision;
     [SerializeField] private float rangoAtaque;
-    private bool goPatrulla;
-    private bool inRangoVision, inRangoAtaque;
-
-
-
+    public bool goPatrulla;
+    public bool inRangoVision, inRangoAtaque, inGolpeado;
 
     private void Awake()
     {
@@ -35,54 +33,79 @@ public class AIUnit : MonoBehaviour
 
     private void Start()
     {
+
     }
 
     private void Update()
     {
-        inRangoVision = Vector3.Distance(transform.position, player.transform.position) <= rangoVision;
-        inRangoAtaque = Vector3.Distance(transform.position, player.transform.position) <= rangoAtaque;
+        inRangoAtaque = Vector3.Distance(transform.position, jugador.transform.position) <= rangoAtaque;
+        inRangoVision = Vector3.Distance(transform.position, jugador.transform.position) <= rangoVision;
 
-        Invoke("Pensar", 5);
-    }
-
-    private void Pensar()
-    {
-        if (!inRangoVision && !inRangoAtaque)
+        if (!inRangoVision && !inRangoAtaque && estadoInicial == "Inactivo")
         {
-            Idle();
+            Inactivo();
         }
-        else if (goPatrulla)
+        else if (!inRangoVision && !inRangoAtaque && estadoInicial == "Patrulla")
         {
             Patrulla();
         }
-        else if (player != null && inRangoVision)
+        else if (jugador != null && !inRangoAtaque && inRangoVision)
         {
-            Chase(player);
+            Perseguir(jugador);
         }
-        else if (player != null && inRangoAtaque)
+        else if (jugador != null && inRangoAtaque)
         {
-            Ataque(player);
+            Ataque(jugador);
         }
     }
 
-    private void LookAt(GameObject target)
+    private void LookAt(GameObject objetivo)
     {
 
     }
-    private void Idle()
+    public void TakeDamage(int daño)
     {
-        animator.SetBool("isIdle", true);
+        Golpeado();
+    }
+    private void Golpeado()
+    {
+        animator.SetBool("isGolpeado", true);
+        textoEstados.text = "Golpeado";
+    }
+    private void Inactivo()
+    {
+        agent.destination = this.transform.position;
+
+        animator.SetFloat("speed", agent.velocity.magnitude);
+        textoEstados.text = "Inactivo";
     }
     private void Patrulla()
     {
-        animator.SetBool("isWalking", true);
+        //agent.destination = ////TODO: PATRULLA
+
+        animator.SetFloat("speed", agent.velocity.magnitude);
+        textoEstados.text = "Patrulla";
     }
-    private void Chase(GameObject target)
+    private void Perseguir(GameObject objetivo)
     {
-        animator.SetBool("isWalking", true);
+        agent.destination = objetivo.transform.position;
+        animator.SetFloat("speed", agent.velocity.magnitude);
+
+        textoEstados.text = "Perseguir";
     }
-    private void Ataque(GameObject target)
+    private void Ataque(GameObject objetivo)
     {
-        animator.SetBool("isAttaking", true);
+        agent.destination = this.transform.position;
+
+        animator.SetBool("isAtaque", true);
+        textoEstados.text = "Ataque";
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, rangoVision);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, rangoAtaque);
     }
 }
