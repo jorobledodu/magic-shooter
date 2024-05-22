@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class ChaseState : State
+[RequireComponent(typeof(NavMeshAgent))]
+public class AttackState : State
 {
-    //public static ChaseState instance;
+    //public static AttackState instance;
 
-    private AttackState attackState;
-
-    public bool isInAttackRange;
+    private ChaseState chaseState;
 
     public TextMeshPro stateText;
     private Animator animator;
+    private NavMeshAgent agent;
+    private AIUnit _AIUnit;
 
     private void Awake()
     {
@@ -28,27 +30,29 @@ public class ChaseState : State
         //}
         #endregion
 
-        attackState = GetComponent<AttackState>();
+        chaseState = GetComponent<ChaseState>();
 
         animator = GetComponent<Animator>();
+        _AIUnit = GetComponent<AIUnit>();
     }
 
     public override State RunCurrentState()
     {
-        if (isInAttackRange) //Attack
+        if (!chaseState.isInAttackRange) //Chase
         {
-            
-            return attackState;
+            animator.SetBool("isRunning", true);
+            return chaseState;
         }
-        else //Chase
+        else //Attack
         {
-            Chase();
+            Attack();
             return this;
         }
     }
 
-    private void Chase()
+    private void Attack()
     {
-        stateText.text = "Chase";
+        animator.SetBool("isAttaking", true);
+        stateText.text = "Attack";
     }
 }

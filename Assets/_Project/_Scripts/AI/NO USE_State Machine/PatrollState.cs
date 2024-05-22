@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class PatrollState : State
 {
     //public static PatrollState instance;
@@ -15,6 +17,8 @@ public class PatrollState : State
 
     public TextMeshPro stateText;
     private Animator animator;
+    private NavMeshAgent agent;
+    private AIUnit _AIUnit;
 
     private void Awake()
     {
@@ -35,6 +39,8 @@ public class PatrollState : State
         attackState = GetComponent<AttackState>();
 
         animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        _AIUnit = GetComponent<AIUnit>();
     }
 
     public override State RunCurrentState()

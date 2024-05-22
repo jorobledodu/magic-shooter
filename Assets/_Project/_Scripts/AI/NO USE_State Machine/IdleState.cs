@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class IdleState : State
 {
     //public static IdleState instance;
@@ -16,6 +18,8 @@ public class IdleState : State
 
     public TextMeshPro stateText;
     private Animator animator;
+    private NavMeshAgent agent;
+    private AIUnit _AIUnit;
 
     private void Awake()
     {
@@ -36,6 +40,8 @@ public class IdleState : State
         attackState = GetComponent<AttackState>();
 
         animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        _AIUnit = GetComponent<AIUnit>();
     }
 
     public override State RunCurrentState()
@@ -65,5 +71,7 @@ public class IdleState : State
     private void Idle()
     {
         stateText.text = "Idle";
+
+        agent.destination = transform.position;
     }
 }
