@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [DefaultExecutionOrder(1)]
@@ -13,29 +14,34 @@ public class AIUnit : MonoBehaviour
     private Animator animator;
     public GameObject jugador;
     public TextMeshPro textoEstados;
+    private Ragdoll ragdoll;
+    public Collider[] brazosColliders;
 
     //Parametros
 
     //Estadisticas
     public string estadoInicial; 
     public string element;
-    [SerializeField] private float life;
+    [SerializeField] private float vidaMaxima;
+    public float vidaActual;
     [SerializeField] private float rangoVision;
     [SerializeField] private float rangoAtaque;
-    public bool goPatrulla;
-    public bool inRangoVision, inRangoAtaque, inGolpeado;
+    public bool canMover = true;
+    public bool inRangoVision, inRangoAtaque, inGolpeado, inAtaque;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        ragdoll = GetComponent<Ragdoll>();
     }
 
     private void Start()
     {
+        ElegirEstadoInicial();
 
+        vidaActual = vidaMaxima;
     }
-
     private void Update()
     {
         inRangoAtaque = Vector3.Distance(transform.position, jugador.transform.position) <= rangoAtaque;
@@ -45,32 +51,32 @@ public class AIUnit : MonoBehaviour
         {
             Inactivo();
         }
-        else if (!inRangoVision && !inRangoAtaque && estadoInicial == "Patrulla")
+        else if (!inRangoVision && !inRangoAtaque && canMover && estadoInicial == "Patrulla")
         {
             Patrulla();
         }
-        else if (jugador != null && !inRangoAtaque && inRangoVision)
+        else if (jugador != null && !inRangoAtaque && !inAtaque && inRangoVision && canMover)
         {
             Perseguir(jugador);
         }
-        else if (jugador != null && inRangoAtaque)
+        else if (jugador != null && !inAtaque && inRangoAtaque)
         {
             Ataque(jugador);
         }
     }
 
-    private void LookAt(GameObject objetivo)
+    private void ElegirEstadoInicial()
     {
-
-    }
-    public void TakeDamage(int daño)
-    {
-        Golpeado();
-    }
-    private void Golpeado()
-    {
-        animator.SetBool("isGolpeado", true);
-        textoEstados.text = "Golpeado";
+        int value = Random.Range(0, 2);
+        switch (value)
+        {
+            case 0:
+                estadoInicial = "Inactivo";
+                break;
+            case 1:
+                estadoInicial = "Patrulla";
+                break;
+        }
     }
     private void Inactivo()
     {
@@ -81,7 +87,7 @@ public class AIUnit : MonoBehaviour
     }
     private void Patrulla()
     {
-        //agent.destination = ////TODO: PATRULLA
+        //agent.destination = ////TODOO: PATRULLA
 
         animator.SetFloat("speed", agent.velocity.magnitude);
         textoEstados.text = "Patrulla";
@@ -95,10 +101,81 @@ public class AIUnit : MonoBehaviour
     }
     private void Ataque(GameObject objetivo)
     {
+        inAtaque = true;
         agent.destination = this.transform.position;
-
         animator.SetBool("isAtaque", true);
         textoEstados.text = "Ataque";
+
+    }
+    private void Golpeado()
+    {
+        canMover = false;
+        agent.destination = this.transform.position;
+
+        rangoVision = 100;
+
+        animator.SetBool("isGolpeado", true);
+        textoEstados.text = "Golpeado";
+    }
+    private void Morir()
+    {
+        canMover = false;
+
+        ragdoll.ActivarRagdoll();
+    }
+
+    public void IsGolpeadoFalse()
+    {
+        //Funcion para llamar desde animacion de enemigo golpeado;
+        animator.SetBool("isGolpeado", false);
+    }
+    public void CanMoverTrue()
+    {
+        canMover = true;
+    }
+    public void RecibirDaño(float cantidad)
+    {
+        vidaActual -= cantidad;
+
+        Golpeado();
+
+        if (vidaActual <= 0.0f)
+        {
+            Morir();
+        }
+    }
+    public void LookAt(GameObject objetivo)
+    {
+        //Solo hacer todo esto si el feedback del enemigo no es bueno
+        ////TODOO: QUATERNION ROTATE
+        ///TODOO: Llamar esta funcion en el inicio de la animacion de ataque (para ver como queda)
+        ///TODOO:  Llamar esta funcion desde 
+    }
+    public void Golpe()
+    {
+        //Esta funcion se tiene que llamar en el frame de la animacion que queremos que se castee el raycast (cuando hace el golpe)
+
+        ////TODO: ATAQUE (RAYCAST HACIA DELANTE) 
+    }
+    public void IsAtaque()
+    {
+        //Al terrminar la animacion de ataque hay un evento que llama a esta funcion, esto permite que a partir de ahí se pueda mover 
+        animator.SetBool("isAtaque", false);
+        inAtaque = false;
+    }
+    public void DesactivarColliderBrazos()
+    {
+        foreach (var brazosCollider in brazosColliders)
+        {
+            brazosCollider.isTrigger = true;
+        }
+    }
+    public void ActivarColliderBrazos()
+    {
+        foreach (var brazosCollider in brazosColliders)
+        {
+            brazosCollider.isTrigger = false;
+        }
     }
 
     private void OnDrawGizmos()

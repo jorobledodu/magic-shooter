@@ -13,12 +13,12 @@ public class FPS_Controller : MonoBehaviour
 
     //References
     public Camera _fpCamera;
+    private AIUnit _AIunit;
     
     public LayerMask _whatCanShot;
     public RaycastHit rayHit;
     public Animator _animator;
     public AudioSource _SFXAudioSource;
-
 
     //Gun stats
     public int damage;
@@ -30,7 +30,7 @@ public class FPS_Controller : MonoBehaviour
     public GameObject _shotHitTest;
 
     //Graphics
-    public GameObject _prefabHitHole, _prefanHitFlash;
+    public GameObject _prefabHitHole, _prefanHitFlash, _prefabHit;
     public VisualEffect _VFXMuzzleFlash;
     public TextMeshProUGUI _bulletsText;
 
@@ -73,18 +73,23 @@ public class FPS_Controller : MonoBehaviour
             //RayCast
             if (Physics.Raycast(_fpCamera.transform.position, direction, out rayHit, range, _whatCanShot))
             {
-                if (rayHit.collider.CompareTag("Enemy"))
+                if (rayHit.collider.CompareTag("Enemigos"))
                 {
+                    Debug.Log("Enemigo golpeado");
+
+                    _AIunit = rayHit.collider.GetComponentInParent<AIUnit>();
+                    _AIunit.RecibirDaño(damage);
+
                     //Graphics  
-                    Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
+                    Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
                 }
-                else if (rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Wood"))
-                {
-                    //Graphics  
-                    Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
-                    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
-                }
+                //else if (rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Wood"))
+                //{
+                //    //Graphics  
+                //    Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
+                //    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+                //}
                 else
                 {
                     //Graphics  

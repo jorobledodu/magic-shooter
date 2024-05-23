@@ -7,7 +7,7 @@ TagManager:
   - Floor/Wet
   - Floor/Concrete
   - Floor/Wood
-  - Enemy
+  - Enemigos
   layers:
   - Default
   - TransparentFX
@@ -21,8 +21,8 @@ TagManager:
   - Gun Camera Layer
   - Walls
   - Obstacles
-  - Enemies
-  - 
+  - Enemigos
+  - NoPlayerCollision
   - 
   - 
   - 

@@ -23,8 +23,4 @@ public class AnimationEvents : MonoBehaviour
         _muzzleFlash.Play();
     }
 
-    public void AIAttackFalse()
-    {
-        _animator.SetBool("isAttaking", false);
-    }
 }
