@@ -20,9 +20,9 @@ public class FP_Controller : MonoBehaviour
 
     [Header("Movement Parametres")]
     [SerializeField] private float walkSpeed = 3.0f;
-    [SerializeField] private float runSpeed = 6.0f; //No es necesario modificarlos ya que se calculan por equaciones
-    [SerializeField] private float crouchSpeed = 1.5f; //No es necesario modificarlos ya que se calculan por equaciones
-    [SerializeField] private float slowedSpeed = 1.0f; //No es necesario modificarlos ya que se calculan por equaciones
+    private float runSpeed; //No es necesario modificarlos ya que se calculan por equaciones
+    private float crouchSpeed; //No es necesario modificarlos ya que se calculan por equaciones
+    private float slowedSpeed; //No es necesario modificarlos ya que se calculan por equaciones
 
     [Header("Life Parametres")]
     [SerializeField] public float maxHealth = 100.0f;
