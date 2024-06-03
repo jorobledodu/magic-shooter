@@ -102,10 +102,15 @@ public class AIUnit : MonoBehaviour
     private void Ataque(GameObject objetivo)
     {
         inAtaque = true;
+        textoEstados.text = "Ataque";
         agent.destination = this.transform.position;
         animator.SetBool("isAtaque", true);
-        textoEstados.text = "Ataque";
 
+        ////TOODO: Raycast de ataque y bajar la vida al "player"
+        //if (Physics.Raycast(transform.position, transform.transform.forward, out rayHit, rangoAtaque))
+        //{
+
+        //}
     }
     private void Golpeado()
     {
@@ -123,7 +128,6 @@ public class AIUnit : MonoBehaviour
 
         ragdoll.ActivarRagdoll();
     }
-
     public void IsGolpeadoFalse()
     {
         //Funcion para llamar desde animacion de enemigo golpeado;

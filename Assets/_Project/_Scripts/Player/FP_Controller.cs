@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,7 +26,9 @@ public class FP_Controller : MonoBehaviour
     private float slowedSpeed; //No es necesario modificarlos ya que se calculan por equaciones
 
     [Header("Life Parametres")]
-    [SerializeField] public float maxHealth = 100.0f;
+    [SerializeField] private Image healthBarFill;
+    [SerializeField] private Gradient healthBarGradient;
+    [SerializeField] private float maxHealth = 100.0f;
     [SerializeField] private float timeBeforeRegenHealth = 3.0f;
     [SerializeField] private float healthValueIncrement = 1.0f;
     [SerializeField] private float healthTimeIncrement = 0.1f;
@@ -38,9 +41,6 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float lookSpeedVertical = 2.0f;
     [SerializeField] private float upperLookLimit = 80.0f;
     [SerializeField] private float lowerLookLimit = 80.0f;
-    [SerializeField] private RawImage actualCrosshairImage;
-    [SerializeField] private Texture2D baseCrosshairImage;
-    [SerializeField] private Texture2D interactCrosshairImage;
 
     [Header("Jumping Parametres")]
     [SerializeField] private float jumpForce = 8.0f;
@@ -81,6 +81,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float interactionDistance = default;
     [SerializeField] private LayerMask interactionLayer = default;
     [SerializeField] private TextMeshProUGUI interactuarText;
+    [SerializeField] private Image interactionCroshairImage;
     private Interactable currentInteractable;
 
     ///Variables
@@ -93,7 +94,7 @@ public class FP_Controller : MonoBehaviour
     public bool isSlowed = false;
 
     //Health
-    private float currentHealth;
+    public float currentHealth;
     private Coroutine regeneratingHealth;
 
     //Look
@@ -115,16 +116,7 @@ public class FP_Controller : MonoBehaviour
     private InputHandle _inputHandle;
     private Camera _fpCamera;
     private CharacterController _characterController;
-    public static FP_Controller instance;
-
-    private void OnEnable()
-    {
-        OnTakeDamage += ApplyDamage;
-    }
-    private void OnDisable()
-    {
-        OnTakeDamage -= ApplyDamage;
-    }
+    public static FP_Controller instance;   
 
     private void Awake()
     {
@@ -149,8 +141,9 @@ public class FP_Controller : MonoBehaviour
         slowedSpeed = walkSpeed / 3;
 
         interactuarText.text = "";
-    }
 
+        interactionCroshairImage.gameObject.SetActive(false);
+    }
     private void Update()
     {
         if (CanMove)
@@ -186,7 +179,6 @@ public class FP_Controller : MonoBehaviour
         }
     }
 
-
     private void HandleMovementInput()
     {
         velocityMultiplicator = isSlowed ? slowedSpeed : isCrouching ? crouchSpeed : ShouldRun ? runSpeed : walkSpeed;
@@ -201,24 +193,34 @@ public class FP_Controller : MonoBehaviour
 
         isMoving = currentInput.x != 0 || currentInput.y != 0;
     }
-    private void ApplyDamage(float dmg)
+    public void TakeDamage(float dmg)
     {
+        Debug.Log("Hitted");
+
         currentHealth -= dmg;
-        OnDamage?.Invoke(currentHealth);
 
         if (currentHealth <= 0)
+        {
             Death();
-        else if (regeneratingHealth != null)
             StopCoroutine(regeneratingHealth);
-
+        }
+        else if (regeneratingHealth != null)
+        {
+            StopCoroutine(regeneratingHealth);
+        }
         regeneratingHealth = StartCoroutine(RegenerateHealth());
+
+        UpdateHealthBar();
+    }
+    private void UpdateHealthBar()
+    {
+        float targetFillAmount = currentHealth / maxHealth;
+        healthBarFill.fillAmount = targetFillAmount;
+        healthBarFill.color = healthBarGradient.Evaluate(targetFillAmount);
     }
     private void Death()
     {
         currentHealth = 0;
-
-        if (regeneratingHealth != null)
-            StopCoroutine(RegenerateHealth());
 
         Debug.Log("DEATH");
     }
@@ -231,11 +233,14 @@ public class FP_Controller : MonoBehaviour
         {
             currentHealth += healthValueIncrement;
 
-            if (currentHealth > maxHealth)
+            if (currentHealth >= maxHealth)
+            {
                 currentHealth = maxHealth;
+            }
 
-            OnHeal?.Invoke(currentHealth);
             yield return timeToWait;
+
+            UpdateHealthBar();
         }
 
         regeneratingHealth = null;
@@ -358,9 +363,19 @@ public class FP_Controller : MonoBehaviour
                 if (currentInteractable)
                 {
                     currentInteractable.OnFocus();
-                    interactuarText.text = "F Interactuar"; 
-                    actualCrosshairImage.texture = interactCrosshairImage;
+                    interactuarText.text = "F Interactuar";
+                    interactionCroshairImage.gameObject.SetActive(true);
                 }
+            }
+            //Condicion else if: si estabamos mirando un objeto interactuable y el raycast ya no hace hit y la layer del objeto no coincide con la layer de interaccion, entramos en estado on lose focus (hemos dejado de mirar un objeto interactuable)
+            else if (currentInteractable && hit.collider.gameObject.layer != 8)
+            {
+                //Add: pierde el feedback de que estas mirando algo interactuable
+
+                currentInteractable.OnLoseFocus();
+                currentInteractable = null;
+                interactuarText.text = "";
+                interactionCroshairImage.gameObject.SetActive(false);
             }
         }
         //Condicion else if: si estabamos mirando un objeto interactuable y el raycast ya no hace hit, entramos en estado on lose focus (hemos dejado de mirar un objeto interactuable)
@@ -371,7 +386,7 @@ public class FP_Controller : MonoBehaviour
             currentInteractable.OnLoseFocus();
             currentInteractable = null;
             interactuarText.text = "";
-            actualCrosshairImage.texture = baseCrosshairImage;
+            interactionCroshairImage.gameObject.SetActive(false);
         }
     }
     public void HandleInteractionInput()
