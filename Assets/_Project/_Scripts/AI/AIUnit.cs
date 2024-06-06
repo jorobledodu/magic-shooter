@@ -16,11 +16,12 @@ public class AIUnit : MonoBehaviour
     public TextMeshPro textoEstados;
     private Ragdoll ragdoll;
     public Collider[] brazosColliders;
+    public AudioSource AIAudioSource;
 
     //Parametros
 
     //Estadisticas
-    public string estadoInicial; 
+    private string estadoInicial; 
     public string element;
     [SerializeField] private float vidaMaxima;
     public float vidaActual;
@@ -28,6 +29,8 @@ public class AIUnit : MonoBehaviour
     [SerializeField] private float rangoAtaque;
     public bool canMover = true;
     public bool inRangoVision, inRangoAtaque, inGolpeado, inAtaque;
+    public LayerMask playerLayer;
+    public AudioClip audioVivo, audioGolpeado, audioAtaque, audioMuerto;
 
     private void Awake()
     {
@@ -41,6 +44,8 @@ public class AIUnit : MonoBehaviour
         ElegirEstadoInicial();
 
         vidaActual = vidaMaxima;
+
+        AIAudioSource.Play();
     }
     private void Update()
     {
@@ -84,6 +89,10 @@ public class AIUnit : MonoBehaviour
 
         animator.SetFloat("speed", agent.velocity.magnitude);
         textoEstados.text = "Inactivo";
+
+        ////TODOO: SONIDO DE IDLE
+        AIAudioSource.clip = audioVivo;
+        //AIAudioSource.PlayDelayed(1f);
     }
     private void Patrulla()
     {
@@ -91,13 +100,22 @@ public class AIUnit : MonoBehaviour
 
         animator.SetFloat("speed", agent.velocity.magnitude);
         textoEstados.text = "Patrulla";
+
+        ////TODOO: SONIDO DE CAMINAR
+        //AIAudioSource.clip = audioVivo;
+        //AIAudioSource.PlayDelayed(1f);
+        //AIAudioSource.PlayOneShot(audioVivo);
     }
     private void Perseguir(GameObject objetivo)
     {
         agent.destination = objetivo.transform.position;
         animator.SetFloat("speed", agent.velocity.magnitude);
-
         textoEstados.text = "Perseguir";
+
+        ////TODOO: Sonido de correr
+        //AIAudioSource.clip = audioVivo;
+        //AIAudioSource.PlayDelayed(1f);
+        //AIAudioSource.PlayOneShot(audioVivo);
     }
     private void Ataque(GameObject objetivo)
     {
@@ -106,11 +124,17 @@ public class AIUnit : MonoBehaviour
         agent.destination = this.transform.position;
         animator.SetBool("isAtaque", true);
 
-        ////TOODO: Raycast de ataque y bajar la vida al "player"
-        //if (Physics.Raycast(transform.position, transform.transform.forward, out rayHit, rangoAtaque))
-        //{
-
-        //}
+        ////TODOO: Sonido de zombie atacando
+        AIAudioSource.PlayOneShot(audioAtaque);
+    }
+    public void AtaqueRaycast()
+    {
+        //Raycast de ataque y bajar la vida al "player", esto solamente se llama desde la animacion de ataque
+        RaycastHit rayHit;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out rayHit, rangoAtaque, playerLayer))
+        {
+            rayHit.collider.GetComponent<FP_Controller>().TakeDamage(10);
+        }
     }
     private void Golpeado()
     {
@@ -121,12 +145,19 @@ public class AIUnit : MonoBehaviour
 
         animator.SetBool("isGolpeado", true);
         textoEstados.text = "Golpeado";
+
+        ////TODOO: Sonido al ser golpeado
+        AIAudioSource.PlayOneShot(audioGolpeado);
     }
     private void Morir()
     {
-        canMover = false;
+        ////TODOO: Contador para destuir el game object
+        ////TODOO: Sonido de muerte
+        AIAudioSource.PlayOneShot(audioMuerto);
 
+        canMover = false;
         ragdoll.ActivarRagdoll();
+        textoEstados.text = "Muerto";
     }
     public void IsGolpeadoFalse()
     {
@@ -141,11 +172,15 @@ public class AIUnit : MonoBehaviour
     {
         vidaActual -= cantidad;
 
-        Golpeado();
+        //Golpeado();
 
         if (vidaActual <= 0.0f)
         {
             Morir();
+        }
+        else
+        {
+            Golpeado();
         }
     }
     public void LookAt(GameObject objetivo)
@@ -154,12 +189,6 @@ public class AIUnit : MonoBehaviour
         ////TODOO: QUATERNION ROTATE
         ///TODOO: Llamar esta funcion en el inicio de la animacion de ataque (para ver como queda)
         ///TODOO:  Llamar esta funcion desde 
-    }
-    public void Golpe()
-    {
-        //Esta funcion se tiene que llamar en el frame de la animacion que queremos que se castee el raycast (cuando hace el golpe)
-
-        ////TODO: ATAQUE (RAYCAST HACIA DELANTE) 
     }
     public void IsAtaque()
     {
