@@ -133,7 +133,7 @@ public class AIUnit : MonoBehaviour
         RaycastHit rayHit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out rayHit, rangoAtaque, playerLayer))
         {
-            rayHit.collider.GetComponent<FP_Controller>().TakeDamage(10);
+            rayHit.collider.GetComponent<FP_Controller>().TakeDamage(30);
         }
     }
     private void Golpeado()
