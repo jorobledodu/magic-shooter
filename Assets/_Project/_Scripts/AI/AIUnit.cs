@@ -15,8 +15,10 @@ public class AIUnit : MonoBehaviour
     public GameObject jugador;
     public TextMeshPro textoEstados;
     private Ragdoll ragdoll;
-    public Collider[] brazosColliders;
+    private Collider[] brazosColliders;
     public AudioSource AIAudioSource;
+    private Magias magias;
+    public Transform magiasHandle;
 
     //Parametros
 
@@ -37,6 +39,7 @@ public class AIUnit : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         ragdoll = GetComponent<Ragdoll>();
+        magias = GetComponent<Magias>();
     }
 
     private void Start()
@@ -49,6 +52,31 @@ public class AIUnit : MonoBehaviour
     }
     private void Update()
     {
+        if (magias.magiaActual == MagiasDisponibles.Fuego)
+        {
+            magiasHandle.GetChild(0).gameObject.SetActive(true);
+            magiasHandle.GetChild(1).gameObject.SetActive(false);
+            magiasHandle.GetChild(2).gameObject.SetActive(false);
+        }
+        else if (magias.magiaActual == MagiasDisponibles.Rayo)
+        {
+            magiasHandle.GetChild(0).gameObject.SetActive(false);
+            magiasHandle.GetChild(1).gameObject.SetActive(true);
+            magiasHandle.GetChild(2).gameObject.SetActive(false);
+        }
+        else if (magias.magiaActual == MagiasDisponibles.Agua)
+        {
+            magiasHandle.GetChild(0).gameObject.SetActive(false);
+            magiasHandle.GetChild(1).gameObject.SetActive(false);
+            magiasHandle.GetChild(2).gameObject.SetActive(true);
+        }
+        else if (magias.magiaActual == MagiasDisponibles.Null)
+        {
+            magiasHandle.GetChild(0).gameObject.SetActive(false);
+            magiasHandle.GetChild(1).gameObject.SetActive(false);
+            magiasHandle.GetChild(2).gameObject.SetActive(false);
+        }
+
         inRangoAtaque = Vector3.Distance(transform.position, jugador.transform.position) <= rangoAtaque;
         inRangoVision = Vector3.Distance(transform.position, jugador.transform.position) <= rangoVision;
 
@@ -141,7 +169,7 @@ public class AIUnit : MonoBehaviour
         canMover = false;
         agent.destination = this.transform.position;
 
-        rangoVision = 100;
+        //rangoVision = 100;
 
         animator.SetBool("isGolpeado", true);
         textoEstados.text = "Golpeado";
@@ -156,6 +184,7 @@ public class AIUnit : MonoBehaviour
         AIAudioSource.PlayOneShot(audioMuerto);
 
         canMover = false;
+        agent.destination = this.transform.position;
         ragdoll.ActivarRagdoll();
         textoEstados.text = "Muerto";
     }
@@ -168,11 +197,9 @@ public class AIUnit : MonoBehaviour
     {
         canMover = true;
     }
-    public void RecibirDaño(float cantidad)
+    public void RecibirDaño(float daño)
     {
-        vidaActual -= cantidad;
-
-        //Golpeado();
+        vidaActual -= daño;
 
         if (vidaActual <= 0.0f)
         {

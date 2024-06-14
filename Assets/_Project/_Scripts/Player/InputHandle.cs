@@ -20,6 +20,10 @@ public class InputHandle : MonoBehaviour
     private InputAction interactionAction;
     private InputAction shootAction;
     private InputAction reloadAction;
+    private InputAction changeMagicNullAction;
+    private InputAction changeMagic1Action;
+    private InputAction changeMagic2Action;
+    private InputAction changeMagic3Action;
     #endregion
 
     #region UI InputAction Reference
@@ -57,6 +61,10 @@ public class InputHandle : MonoBehaviour
         interactionAction = playerInputActionAsset.Player.Interaction;
         shootAction = playerInputActionAsset.Player.Shoot;
         reloadAction = playerInputActionAsset.Player.Reload;
+        changeMagicNullAction = playerInputActionAsset.Player.ChangeMagicNull;
+        changeMagic1Action = playerInputActionAsset.Player.ChangeMagic1;
+        changeMagic2Action = playerInputActionAsset.Player.ChangeMagic2;
+        changeMagic3Action = playerInputActionAsset.Player.ChangeMagic3;
 
         pauseAction = playerInputActionAsset.Player.Pause;
     }
@@ -72,6 +80,10 @@ public class InputHandle : MonoBehaviour
         interactionAction.Enable();
         shootAction.Enable();
         reloadAction.Enable();
+        changeMagicNullAction.Enable();
+        changeMagic1Action.Enable();
+        changeMagic2Action.Enable();
+        changeMagic3Action.Enable();
 
         pauseAction.Enable();
 
@@ -89,6 +101,10 @@ public class InputHandle : MonoBehaviour
         interactionAction.Disable();
         shootAction.Disable();
         reloadAction.Disable();
+        changeMagicNullAction.Enable();
+        changeMagic1Action.Disable();
+        changeMagic2Action.Disable();
+        changeMagic3Action.Disable();
 
         pauseAction.Disable();
 
@@ -118,8 +134,14 @@ public class InputHandle : MonoBehaviour
 
         reloadAction.performed += onReload;
 
+        changeMagicNullAction.performed += onChangeMagicNull;
+        changeMagic1Action.performed += onChangeMagic1;
+        changeMagic2Action.performed += onChangeMagic2;
+        changeMagic3Action.performed += onChangeMagic3;
+
         pauseAction.performed += onPause;
     }
+
     private void UnsubscribeInputs()
     {
         moveAction.performed -= onMove;
@@ -142,6 +164,11 @@ public class InputHandle : MonoBehaviour
         shootAction.performed -= onShoot;
 
         reloadAction.performed -= onReload;
+
+        changeMagicNullAction.performed -= onChangeMagicNull;
+        changeMagic1Action.performed -= onChangeMagic1;
+        changeMagic2Action.performed -= onChangeMagic2;
+        changeMagic3Action.performed -= onChangeMagic3;
 
         pauseAction.performed -= onPause;
     }
@@ -225,6 +252,35 @@ public class InputHandle : MonoBehaviour
         if (FPS_Controller.instance.CanReload)
         {
             FPS_Controller.instance.Reload();
+        }
+    }
+
+    private void onChangeMagicNull(InputAction.CallbackContext context)
+    {
+        if (FPS_Controller.instance.CanChangeMagic)
+        {
+            FPS_Controller.instance.ChangeMagicNull();
+        }
+    }
+    private void onChangeMagic1(InputAction.CallbackContext context)
+    {
+        if (FPS_Controller.instance.CanChangeMagic)
+        {
+            FPS_Controller.instance.ChangeMagic1();
+        }
+    }
+    private void onChangeMagic2(InputAction.CallbackContext context)
+    {
+        if (FPS_Controller.instance.CanChangeMagic)
+        {
+            FPS_Controller.instance.ChangeMagic2();
+        }
+    }
+    private void onChangeMagic3(InputAction.CallbackContext context)
+    {
+        if (FPS_Controller.instance.CanChangeMagic)
+        {
+            FPS_Controller.instance.ChangeMagic3();
         }
     }
 }

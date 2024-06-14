@@ -1,19 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.VFX;
 
 public class FPS_Controller : MonoBehaviour
 {
     public bool CanShoot { get; set; } = true;
     public bool CanReload { get; set; } = true;
+    public bool CanChangeMagic { get; set; } = true;
 
     public static FPS_Controller instance;
 
     //References
     public Camera _fpCamera;
-    private AIUnit _AIunit;
     
     public LayerMask _whatCanShot;
     public RaycastHit rayHit;
@@ -35,9 +38,11 @@ public class FPS_Controller : MonoBehaviour
     public TextMeshProUGUI _bulletsText;
 
     //Magias
-    private bool magia_rayo;
-    private bool magia_agua;
-    private bool magia_fuego;
+    public bool magia_rayo;
+    public bool magia_agua;
+    public bool magia_fuego;
+    public Transform magiasHandle;
+    public MagiasDisponibles magiaActiva;
 
     private void Awake()
     {
@@ -45,6 +50,8 @@ public class FPS_Controller : MonoBehaviour
 
         bulletsLeft = magazineSize;
         readyToShoot = true;
+
+        ChangeMagicNull();
     }
     private void Update()
     {   
@@ -64,8 +71,8 @@ public class FPS_Controller : MonoBehaviour
             readyToShoot = false;
 
             //Spread
-            float x = Random.Range(-spread, spread);
-            float y = Random.Range(-spread, spread);
+            float x = UnityEngine.Random.Range(-spread, spread);
+            float y = UnityEngine.Random.Range(-spread, spread);
 
             //Calculare direction with spread
             Vector3 direction = _fpCamera.transform.forward + new Vector3(x, y, 0);
@@ -77,25 +84,35 @@ public class FPS_Controller : MonoBehaviour
                 {
                     Debug.Log("Enemigo golpeado");
 
-                    _AIunit = rayHit.collider.GetComponentInParent<AIUnit>();
-                    _AIunit.RecibirDaño(damage);
+                    //Coger script AIUnit
+                    AIUnit aiUnitEnemigo = rayHit.transform.GetComponentInParent<AIUnit>();
+                    aiUnitEnemigo.RecibirDaño(damage);
 
                     //Graphics  
                     Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
                 }
-                //else if (rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Concrete") || rayHit.collider.CompareTag("Floor/Wood"))
-                //{
-                //    //Graphics  
-                //    Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
-                //    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
-                //}
                 else
                 {
                     //Graphics  
                     Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
                 }
+
+                //Comprobar si el objetivo tiene el script "Magias"
+                if (rayHit.transform.TryGetComponent(out Magias magiasHit))
+                {
+                    magiasHit.CambiarMagia(magiaActiva);
+                    Debug.Log("Magia del objetivo: " + magiasHit.magiaActual);
+                    Debug.Log("Magia anterior del objetivo: " + magiasHit.magiaAnterior);
+                }
+                else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
+                {
+                    magiasHitP.CambiarMagia(magiaActiva);
+                    Debug.Log("Magia del objetivo: " + magiasHitP.magiaActual);
+                    Debug.Log("Magia anterior del objetivo: " + magiasHitP.magiaAnterior);
+                }
+
             }
 
             _shotHitTest.transform.position = rayHit.point;
@@ -122,7 +139,7 @@ public class FPS_Controller : MonoBehaviour
     }
     public void Reload()
     {
-        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !reloading)
+        if (bulletsLeft < magazineSize && !reloading)
         {
             reloading = true;
             _animator.SetBool("Reload", true);
@@ -134,5 +151,38 @@ public class FPS_Controller : MonoBehaviour
         bulletsLeft = magazineSize;
         _animator.SetBool("Reload", false);
         reloading = false;
+    }
+
+    public void ChangeMagicNull()
+    {
+        magiasHandle.GetChild(0).gameObject.SetActive(false);
+        magiasHandle.GetChild(1).gameObject.SetActive(false);
+        magiasHandle.GetChild(2).gameObject.SetActive(false);
+
+        magiaActiva = MagiasDisponibles.Null;
+    }
+    public void ChangeMagic1()
+    {
+        magiasHandle.GetChild(0).gameObject.SetActive(true);
+        magiasHandle.GetChild(1).gameObject.SetActive(false);
+        magiasHandle.GetChild(2).gameObject.SetActive(false);
+
+        magiaActiva = magiasHandle.GetChild(0).GetComponent<Magias>().magiaActual;
+    }
+    public void ChangeMagic2()
+    {
+        magiasHandle.GetChild(0).gameObject.SetActive(false);
+        magiasHandle.GetChild(1).gameObject.SetActive(true);
+        magiasHandle.GetChild(2).gameObject.SetActive(false);
+
+        magiaActiva = magiasHandle.GetChild(1).GetComponent<Magias>().magiaActual;
+    }
+    public void ChangeMagic3()
+    {
+        magiasHandle.GetChild(0).gameObject.SetActive(false);
+        magiasHandle.GetChild(1).gameObject.SetActive(false);
+        magiasHandle.GetChild(2).gameObject.SetActive(true);
+
+        magiaActiva = magiasHandle.GetChild(2).GetComponent<Magias>().magiaActual;
     }
 }
