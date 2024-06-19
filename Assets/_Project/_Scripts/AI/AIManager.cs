@@ -5,15 +5,23 @@ using UnityEngine;
 [DefaultExecutionOrder(0)]
 public class AIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public List<AIUnit> aiUnitsInScene;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        // Inicializar la lista
+        aiUnitsInScene = new List<AIUnit>();
+
+        // Encontrar todos los objetos con el script MyScript
+        AIUnit[] foundObjects = FindObjectsOfType<AIUnit>();
+
+        // Añadirlos a la lista
+        foreach (AIUnit obj in foundObjects)
+        {
+            aiUnitsInScene.Add(obj);
+        }
+
+        // Opcional: Imprimir el número de objetos encontrados
+        Debug.Log("Número de objetos encontrados: " + aiUnitsInScene.Count);
     }
 }

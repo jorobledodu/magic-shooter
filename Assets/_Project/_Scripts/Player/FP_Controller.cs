@@ -32,9 +32,6 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float timeBeforeRegenHealth = 3.0f;
     [SerializeField] private float healthValueIncrement = 1.0f;
     [SerializeField] private float healthTimeIncrement = 0.1f;
-    public static Action<float> OnTakeDamage;
-    public static Action<float> OnDamage;
-    public static Action<float> OnHeal;
 
     [Header("Look Parametres")]
     [SerializeField] private float lookSpeedHorizontal = 2.0f;
@@ -195,11 +192,9 @@ public class FP_Controller : MonoBehaviour
     }
     public void TakeDamage(float dmg)
     {
-        Debug.Log("Hitted");
-
         currentHealth -= dmg;
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0.0f)
         {
             Death();
             StopCoroutine(regeneratingHealth);

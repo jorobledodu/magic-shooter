@@ -103,14 +103,14 @@ public class FPS_Controller : MonoBehaviour
                 if (rayHit.transform.TryGetComponent(out Magias magiasHit))
                 {
                     magiasHit.CambiarMagia(magiaActiva);
-                    Debug.Log("Magia del objetivo: " + magiasHit.magiaActual);
-                    Debug.Log("Magia anterior del objetivo: " + magiasHit.magiaAnterior);
+                    magiasHit.CambiarEstado();
+                    magiasHit.ComprobarEstado();
                 }
                 else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
                 {
                     magiasHitP.CambiarMagia(magiaActiva);
-                    Debug.Log("Magia del objetivo: " + magiasHitP.magiaActual);
-                    Debug.Log("Magia anterior del objetivo: " + magiasHitP.magiaAnterior);
+                    magiasHitP.CambiarEstado();
+                    magiasHitP.ComprobarEstado();
                 }
 
             }
@@ -167,7 +167,7 @@ public class FPS_Controller : MonoBehaviour
         magiasHandle.GetChild(1).gameObject.SetActive(false);
         magiasHandle.GetChild(2).gameObject.SetActive(false);
 
-        magiaActiva = magiasHandle.GetChild(0).GetComponent<Magias>().magiaActual;
+        magiaActiva = magiasHandle.GetChild(0).GetComponent<Magias>().magia;
     }
     public void ChangeMagic2()
     {
@@ -175,7 +175,7 @@ public class FPS_Controller : MonoBehaviour
         magiasHandle.GetChild(1).gameObject.SetActive(true);
         magiasHandle.GetChild(2).gameObject.SetActive(false);
 
-        magiaActiva = magiasHandle.GetChild(1).GetComponent<Magias>().magiaActual;
+        magiaActiva = magiasHandle.GetChild(1).GetComponent<Magias>().magia;
     }
     public void ChangeMagic3()
     {
@@ -183,6 +183,6 @@ public class FPS_Controller : MonoBehaviour
         magiasHandle.GetChild(1).gameObject.SetActive(false);
         magiasHandle.GetChild(2).gameObject.SetActive(true);
 
-        magiaActiva = magiasHandle.GetChild(2).GetComponent<Magias>().magiaActual;
+        magiaActiva = magiasHandle.GetChild(2).GetComponent<Magias>().magia;
     }
 }

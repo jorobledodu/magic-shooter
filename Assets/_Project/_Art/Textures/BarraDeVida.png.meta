@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9ce66e41617f9f9458bcadb20ec1a957
+guid: 77a68f202a5ac9f419bf38f85a7b8316
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Circulos2_0
+      name: BarraDeVida_0
       rect:
         serializedVersion: 2
-        x: 17
-        y: 205
-        width: 161
-        height: 161
+        x: 22
+        y: 257
+        width: 279
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -150,20 +150,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ddde3f1384a66964bbc3cc12c1246df7
-      internalID: 1940986194
+      spriteID: 627d49db0e0d818428ce9493d47f1fbc
+      internalID: -484817431
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Circulos2_1
+      name: BarraDeVida_1
       rect:
         serializedVersion: 2
-        x: 212
-        y: 202
-        width: 166
-        height: 165
+        x: 22
+        y: 192
+        width: 279
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -171,20 +171,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 81bb85404a6304a4e99da4e7cb480ebb
-      internalID: 1509379702
+      spriteID: eea57d11c76904541abc4619d1bf49e5
+      internalID: -1015582854
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Circulos2_2
+      name: BarraDeVida_2
       rect:
         serializedVersion: 2
-        x: 12
-        y: 13
-        width: 171
-        height: 171
+        x: 11
+        y: 108
+        width: 302
+        height: 59
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -192,20 +192,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a0f98d6d536e5144cb3a5fd11fdc6ee2
-      internalID: -2028586630
+      spriteID: 5ccd8d96ebe3aa84f8ccb71fc9bd738f
+      internalID: -1348343152
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Circulos2_3
+      name: BarraDeVida_3
       rect:
         serializedVersion: 2
-        x: 207
-        y: 10
-        width: 176
-        height: 176
+        x: 11
+        y: 29
+        width: 302
+        height: 59
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -213,8 +213,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6045a6ac53d1f4d4397583f016689aa1
-      internalID: 894242653
+      spriteID: b559be4c17ebb0747847bad32fc972a6
+      internalID: 2064112815
       vertices: []
       indices: 
       edges: []
@@ -222,7 +222,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 905c82b1bc556d74d83667e2508badae
+    spriteID: 6f5f92ba7d77f5646b2b379e660472b4
     internalID: 0
     vertices: []
     indices: 
@@ -230,10 +230,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Circulos2_0: 1940986194
-      Circulos2_1: 1509379702
-      Circulos2_2: -2028586630
-      Circulos2_3: 894242653
+      BarraDeVida_0: -484817431
+      BarraDeVida_1: -1015582854
+      BarraDeVida_2: -1348343152
+      BarraDeVida_3: 2064112815
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -27,6 +28,12 @@ public class AIUnit : MonoBehaviour
     public string element;
     [SerializeField] private float vidaMaxima;
     public float vidaActual;
+    [SerializeField] private Image healthBarFill;
+    [SerializeField] private Gradient healthBarGradient;
+    [SerializeField] private float timeBeforeRegenHealth = 3.0f;
+    [SerializeField] private float healthValueIncrement = 1.0f;
+    [SerializeField] private float healthTimeIncrement = 0.1f;
+    private Coroutine regeneratingHealth;
     [SerializeField] private float rangoVision;
     [SerializeField] private float rangoAtaque;
     public bool canMover = true;
@@ -47,30 +54,28 @@ public class AIUnit : MonoBehaviour
         ElegirEstadoInicial();
 
         vidaActual = vidaMaxima;
-
-        AIAudioSource.Play();
     }
     private void Update()
     {
-        if (magias.magiaActual == MagiasDisponibles.Fuego)
+        if (magias.magia == MagiasDisponibles.Fuego)
         {
             magiasHandle.GetChild(0).gameObject.SetActive(true);
             magiasHandle.GetChild(1).gameObject.SetActive(false);
             magiasHandle.GetChild(2).gameObject.SetActive(false);
         }
-        else if (magias.magiaActual == MagiasDisponibles.Rayo)
+        else if (magias.magia == MagiasDisponibles.Rayo)
         {
             magiasHandle.GetChild(0).gameObject.SetActive(false);
             magiasHandle.GetChild(1).gameObject.SetActive(true);
             magiasHandle.GetChild(2).gameObject.SetActive(false);
         }
-        else if (magias.magiaActual == MagiasDisponibles.Agua)
+        else if (magias.magia == MagiasDisponibles.Agua)
         {
             magiasHandle.GetChild(0).gameObject.SetActive(false);
             magiasHandle.GetChild(1).gameObject.SetActive(false);
             magiasHandle.GetChild(2).gameObject.SetActive(true);
         }
-        else if (magias.magiaActual == MagiasDisponibles.Null)
+        else if (magias.magia == MagiasDisponibles.Null)
         {
             magiasHandle.GetChild(0).gameObject.SetActive(false);
             magiasHandle.GetChild(1).gameObject.SetActive(false);
@@ -119,8 +124,6 @@ public class AIUnit : MonoBehaviour
         textoEstados.text = "Inactivo";
 
         ////TODOO: SONIDO DE IDLE
-        AIAudioSource.clip = audioVivo;
-        //AIAudioSource.PlayDelayed(1f);
     }
     private void Patrulla()
     {
@@ -130,9 +133,6 @@ public class AIUnit : MonoBehaviour
         textoEstados.text = "Patrulla";
 
         ////TODOO: SONIDO DE CAMINAR
-        //AIAudioSource.clip = audioVivo;
-        //AIAudioSource.PlayDelayed(1f);
-        //AIAudioSource.PlayOneShot(audioVivo);
     }
     private void Perseguir(GameObject objetivo)
     {
@@ -141,9 +141,6 @@ public class AIUnit : MonoBehaviour
         textoEstados.text = "Perseguir";
 
         ////TODOO: Sonido de correr
-        //AIAudioSource.clip = audioVivo;
-        //AIAudioSource.PlayDelayed(1f);
-        //AIAudioSource.PlayOneShot(audioVivo);
     }
     private void Ataque(GameObject objetivo)
     {
@@ -153,7 +150,6 @@ public class AIUnit : MonoBehaviour
         animator.SetBool("isAtaque", true);
 
         ////TODOO: Sonido de zombie atacando
-        AIAudioSource.PlayOneShot(audioAtaque);
     }
     public void AtaqueRaycast()
     {
@@ -204,12 +200,54 @@ public class AIUnit : MonoBehaviour
         if (vidaActual <= 0.0f)
         {
             Morir();
+
+            if (regeneratingHealth != null)
+            {
+                StopCoroutine(regeneratingHealth);
+            }
         }
-        else
+        else if (vidaActual > 0.0f)
         {
             Golpeado();
+
+            if (regeneratingHealth != null)
+            {
+                StopCoroutine(regeneratingHealth);
+            }
         }
+
+        regeneratingHealth = StartCoroutine(RegenerateHealth());
+        UpdateHealthBar();
     }
+    private void UpdateHealthBar()
+    {
+        float targetFillAmount = vidaActual / vidaMaxima;
+        healthBarFill.fillAmount = targetFillAmount;
+        healthBarFill.color = healthBarGradient.Evaluate(targetFillAmount);
+    }
+
+    private IEnumerator RegenerateHealth()
+    {
+        yield return new WaitForSeconds(timeBeforeRegenHealth);
+        WaitForSeconds timeToWait = new WaitForSeconds(healthTimeIncrement);
+
+        while (vidaActual < vidaMaxima)
+        {
+            vidaActual += healthValueIncrement;
+
+            if (vidaActual >= vidaMaxima)
+            {
+                vidaActual = vidaMaxima;
+            }
+
+            yield return timeToWait;
+
+            UpdateHealthBar();
+        }
+
+        regeneratingHealth = null;
+    }
+
     public void LookAt(GameObject objetivo)
     {
         //Solo hacer todo esto si el feedback del enemigo no es bueno
