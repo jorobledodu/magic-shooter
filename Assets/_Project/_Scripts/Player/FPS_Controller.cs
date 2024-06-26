@@ -91,6 +91,22 @@ public class FPS_Controller : MonoBehaviour
                     //Graphics  
                     Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+
+                    //Comprobar si el objetivo tiene el script "Magias"
+                    if (rayHit.transform.TryGetComponent(out Magias magiasHit))
+                    {
+                        Debug.Log(magiasHit);
+                        magiasHit.CambiarMagia(magiaActiva);
+                        magiasHit.CambiarEstado();
+                        magiasHit.ComprobarEstado();
+                    }
+                    else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
+                    {
+                        Debug.Log(magiasHitP);
+                        magiasHitP.CambiarMagia(magiaActiva);
+                        magiasHitP.CambiarEstado();
+                        magiasHitP.ComprobarEstado();
+                    }
                 }
                 else
                 {
@@ -99,20 +115,17 @@ public class FPS_Controller : MonoBehaviour
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
                 }
 
-                //Comprobar si el objetivo tiene el script "Magias"
-                if (rayHit.transform.TryGetComponent(out Magias magiasHit))
+                if (rayHit.collider.CompareTag("Floor/Wet"))
                 {
-                    magiasHit.CambiarMagia(magiaActiva);
-                    magiasHit.CambiarEstado();
-                    magiasHit.ComprobarEstado();
+                    //Comprobar si el objetivo tiene el script "Magias"
+                    if (rayHit.transform.TryGetComponent(out Magias magiasHit))
+                    {
+                        Debug.Log(magiasHit);
+                        magiasHit.CambiarMagia(magiaActiva);
+                        magiasHit.CambiarEstado();
+                        magiasHit.ComprobarEstado();
+                    }
                 }
-                else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
-                {
-                    magiasHitP.CambiarMagia(magiaActiva);
-                    magiasHitP.CambiarEstado();
-                    magiasHitP.ComprobarEstado();
-                }
-
             }
 
             _shotHitTest.transform.position = rayHit.point;
