@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 3370055185341765886}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor_Flat
-  m_TagString: Untagged
+  m_TagString: Floor/Concrete
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647

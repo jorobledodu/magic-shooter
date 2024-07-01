@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [DefaultExecutionOrder(1)]
+
+
 public class AIUnit : MonoBehaviour
 {
     //Referencias
@@ -16,11 +18,11 @@ public class AIUnit : MonoBehaviour
     public GameObject jugador;
     public TextMeshPro textoEstados;
     private Ragdoll ragdoll;
-    private Collider[] brazosColliders;
     public AudioSource AIAudioSource;
     private Magias magias;
-    public Transform magiasHandle;
-
+    public ParticleSystem mojadoParticleText;
+    public ParticleSystem conCargaParticleText;
+         
     //Parametros
 
     //Estadisticas
@@ -57,30 +59,24 @@ public class AIUnit : MonoBehaviour
     }
     private void Update()
     {
-        if (magias.magia == MagiasDisponibles.Fuego)
+        if (magias.magia == MagiasDisponibles.Agua)
         {
-            magiasHandle.GetChild(0).gameObject.SetActive(true);
-            magiasHandle.GetChild(1).gameObject.SetActive(false);
-            magiasHandle.GetChild(2).gameObject.SetActive(false);
+            mojadoParticleText.gameObject.SetActive(true);
+            conCargaParticleText.gameObject.SetActive(false);
+            StartCoroutine(MojadoTextCoroutine());
         }
         else if (magias.magia == MagiasDisponibles.Rayo)
         {
-            magiasHandle.GetChild(0).gameObject.SetActive(false);
-            magiasHandle.GetChild(1).gameObject.SetActive(true);
-            magiasHandle.GetChild(2).gameObject.SetActive(false);
+            mojadoParticleText.gameObject.SetActive(false);
+            conCargaParticleText.gameObject.SetActive(true);
+            StartCoroutine(ConCargaTextCoroutine());
         }
-        else if (magias.magia == MagiasDisponibles.Agua)
+        else
         {
-            magiasHandle.GetChild(0).gameObject.SetActive(false);
-            magiasHandle.GetChild(1).gameObject.SetActive(false);
-            magiasHandle.GetChild(2).gameObject.SetActive(true);
+            mojadoParticleText.gameObject.SetActive(false);
+            conCargaParticleText.gameObject.SetActive(false);
         }
-        else if (magias.magia == MagiasDisponibles.Null)
-        {
-            magiasHandle.GetChild(0).gameObject.SetActive(false);
-            magiasHandle.GetChild(1).gameObject.SetActive(false);
-            magiasHandle.GetChild(2).gameObject.SetActive(false);
-        }
+
 
         inRangoAtaque = Vector3.Distance(transform.position, jugador.transform.position) <= rangoAtaque;
         inRangoVision = Vector3.Distance(transform.position, jugador.transform.position) <= rangoVision;
@@ -118,7 +114,8 @@ public class AIUnit : MonoBehaviour
     }
     private void Inactivo()
     {
-        agent.destination = this.transform.position;
+        //agent.destination = this.transform.position;
+        agent.SetDestination(this.transform.position);
 
         animator.SetFloat("speed", agent.velocity.magnitude);
         textoEstados.text = "Inactivo";
@@ -136,7 +133,10 @@ public class AIUnit : MonoBehaviour
     }
     private void Perseguir(GameObject objetivo)
     {
-        agent.destination = objetivo.transform.position;
+        //agent.destination = objetivo.transform.position;
+        agent.SetDestination(objetivo.transform.position);
+
+
         animator.SetFloat("speed", agent.velocity.magnitude);
         textoEstados.text = "Perseguir";
 
@@ -146,7 +146,10 @@ public class AIUnit : MonoBehaviour
     {
         inAtaque = true;
         textoEstados.text = "Ataque";
-        agent.destination = this.transform.position;
+        
+        //agent.destination = this.transform.position;
+        agent.SetDestination(this.transform.position);
+
         animator.SetBool("isAtaque", true);
 
         ////TODOO: Sonido de zombie atacando
@@ -163,7 +166,8 @@ public class AIUnit : MonoBehaviour
     private void Golpeado()
     {
         canMover = false;
-        agent.destination = this.transform.position;
+        //agent.destination = this.transform.position;
+        agent.SetDestination(this.transform.position);
 
         //rangoVision = 100;
 
@@ -180,7 +184,10 @@ public class AIUnit : MonoBehaviour
         AIAudioSource.PlayOneShot(audioMuerto);
 
         canMover = false;
-        agent.destination = this.transform.position;
+
+        //agent.destination = this.transform.position;
+        agent.SetDestination(this.transform.position);
+
         ragdoll.ActivarRagdoll();
         textoEstados.text = "Muerto";
     }
@@ -248,6 +255,18 @@ public class AIUnit : MonoBehaviour
         regeneratingHealth = null;
     }
 
+    private IEnumerator MojadoTextCoroutine()
+    {
+        mojadoParticleText.Play();
+        yield return new WaitForSeconds(2f);
+        mojadoParticleText.Play();
+    }
+    private IEnumerator ConCargaTextCoroutine()
+    {
+        conCargaParticleText.Play();
+        yield return new WaitForSeconds(2f);
+        conCargaParticleText.Play();
+    }
     public void LookAt(GameObject objetivo)
     {
         //Solo hacer todo esto si el feedback del enemigo no es bueno
@@ -260,20 +279,6 @@ public class AIUnit : MonoBehaviour
         //Al terrminar la animacion de ataque hay un evento que llama a esta funcion, esto permite que a partir de ahí se pueda mover 
         animator.SetBool("isAtaque", false);
         inAtaque = false;
-    }
-    public void DesactivarColliderBrazos()
-    {
-        foreach (var brazosCollider in brazosColliders)
-        {
-            brazosCollider.isTrigger = true;
-        }
-    }
-    public void ActivarColliderBrazos()
-    {
-        foreach (var brazosCollider in brazosColliders)
-        {
-            brazosCollider.isTrigger = false;
-        }
     }
 
     private void OnDrawGizmos()

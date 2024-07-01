@@ -2,25 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UI : MonoBehaviour
 {
     [SerializeField] private GameObject controlesCanvas;
     [SerializeField] private bool gamePause;
 
-    public static UI instance;
 
-    private void OnEnable()
-    {
-        controlesCanvas.SetActive(true);
-    }
-    private void OnDisable()
-    {
-    }
-    private void Start()
-    {
-        instance = this;
-    }
+
 
     public void onGamePause()
     {
@@ -39,12 +29,7 @@ public class UI : MonoBehaviour
         }
         else
         {
-            FP_Controller.instance.CanMove = true;
-            FP_Controller.instance.CanLook = true;
-            FP_Controller.instance.CanCrouch = true;
-            FP_Controller.instance.CanRun = true;
-            FP_Controller.instance.CanJump = true;
-            FP_Controller.instance.CanInteract = true;
+
         }
     }
 }

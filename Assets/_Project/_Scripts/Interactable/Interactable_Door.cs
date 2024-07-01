@@ -9,6 +9,7 @@ public class Interactable_Door : Interactable
     private Animator anim;
     public Vector3 playerTransformDirection;
     public Vector3 doorTransformDirection;
+    public SphereCollider aiInteractionCollider;
 
     private void Start()
     {
@@ -35,6 +36,21 @@ public class Interactable_Door : Interactable
             anim.SetFloat("dot", dot);
             anim.SetBool("isOpen", isOpen);
 
+        }
+    }
+
+    public void AIOnInteractOpen(Vector3 _AITransformDirection)
+    {
+        //StartCoroutine(CloseDoor(_AITransformDirection));
+        if (!isOpen)
+        {
+            isOpen = !isOpen;
+
+            doorTransformDirection = transform.TransformDirection(Vector3.forward);
+            float dot = Vector3.Dot(doorTransformDirection, _AITransformDirection);
+
+            anim.SetFloat("dot", dot);
+            anim.SetBool("isOpen", isOpen);
         }
     }
 

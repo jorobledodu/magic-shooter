@@ -110,7 +110,7 @@ public class FP_Controller : MonoBehaviour
     private float GetCurrentOffset => isSlowed ? baseStepSpeed * slowedStepMultipler : isCrouching ? baseStepSpeed * crouchStepMultipler : isRuning ? baseStepSpeed * runStepMultipler : baseStepSpeed;
 
     ///References
-    private InputHandle _inputHandle;
+    private Player_InputHandle _inputHandle;
     private Camera _fpCamera;
     private CharacterController _characterController;
     public static FP_Controller instance;   
@@ -124,14 +124,11 @@ public class FP_Controller : MonoBehaviour
 
         defaultYPos = _fpCamera.transform.localPosition.y;
         currentHealth = maxHealth;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Start()
     {
-        _inputHandle = InputHandle.Instance;
+        _inputHandle = Player_InputHandle.instance;
 
         runSpeed = walkSpeed * 2;
         crouchSpeed = walkSpeed / 2;

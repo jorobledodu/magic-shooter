@@ -9,6 +9,7 @@ public class MagiasEnemigos : Magias
     public EstadosDisponibles estado;
     [SerializeField] private float rangoEfecto;
     [SerializeField] private LayerMask whatCanElectrocutar;
+    public ParticleSystem electrocutadoParticle;
 
     private AIManager aiManager;
     private AIUnit aiUnit;
@@ -53,6 +54,8 @@ public class MagiasEnemigos : Magias
         else if (estado == EstadosDisponibles.Electrocutado)
         {
             aiUnit.RecibirDaño(999f);
+            electrocutadoParticle.gameObject.SetActive(true);
+            electrocutadoParticle.Play();
             StartCoroutine(ElectrocutaUnidadesEnRango());
         }
         else if (estado == EstadosDisponibles.Mojado)
