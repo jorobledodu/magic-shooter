@@ -65,7 +65,7 @@ public class UI_Controller : MonoBehaviour
     }
     private void Update()
     {
-        resolucionText.text = Screen.width + " x " + Screen.height;
+        //resolucionText.text = Screen.width + " x " + Screen.height;
     }
     private void OnEnable()
     {
@@ -75,7 +75,6 @@ public class UI_Controller : MonoBehaviour
     {
         UnsubscribeInputs();
     }
-
 
     private void SubscribeInputs()
     {
@@ -171,7 +170,6 @@ public class UI_Controller : MonoBehaviour
             eventSystem.SetSelectedGameObject(graficosMenuFirstOption);
         }
     }
-
     public void ChangeScene(int indexEscena)
     {
         SceneManager.LoadScene(indexEscena);

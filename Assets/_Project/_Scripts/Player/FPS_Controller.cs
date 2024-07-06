@@ -108,6 +108,12 @@ public class FPS_Controller : MonoBehaviour
                         magiasHitP.ComprobarEstado();
                     }
                 }
+                else if (rayHit.collider.CompareTag("NPC"))
+                {
+                    //Graphics  
+                    Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
+                    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+                }
                 else
                 {
                     //Graphics  
@@ -128,7 +134,7 @@ public class FPS_Controller : MonoBehaviour
                 }
             }
 
-            _shotHitTest.transform.position = rayHit.point;
+            //_shotHitTest.transform.position = rayHit.point;
 
             //Sound
             _SFXAudioSource.PlayOneShot(_pistolShotAudio);

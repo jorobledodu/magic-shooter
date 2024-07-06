@@ -8,6 +8,8 @@ TagManager:
   - Floor/Concrete
   - Floor/Wood
   - Enemigos
+  - Floor/Dirt
+  - NPC
   layers:
   - Default
   - TransparentFX

@@ -72,6 +72,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private AudioClip[] concreteStepsClips = default;
     [SerializeField] private AudioClip[] woodStepsClips = default;
     [SerializeField] private AudioClip[] wetStepsClips = default;
+    [SerializeField] private AudioClip[] dirtStepsClips = default;
 
     [Header("Interaction")]
     [SerializeField] private Vector3 interactionRayPoint = default;
@@ -246,7 +247,7 @@ public class FP_Controller : MonoBehaviour
     }
     private void HandleJump()
     {
-        if (ShouldJump && !Physics.Raycast(_fpCamera.transform.position, Vector3.up, 1f) && !isCrouching)
+        if (ShouldJump && !Physics.Raycast(_fpCamera.transform.position, Vector3.up, 0.5f) && !isCrouching)
         {
             moveDirecton.y = jumpForce;
         }
@@ -317,21 +318,29 @@ public class FP_Controller : MonoBehaviour
 
         if (footstepTimer <= 0)
         {
-            if (Physics.Raycast(_fpCamera.transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer))
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer, QueryTriggerInteraction.Collide))
             {
                 switch (hit.collider.tag)
                 {
                     case "Floor/Concrete":
                         _SFXAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
+                        Debug.Log("Concrete");
                         break;
                     case "Floor/Wood":
                         _SFXAudioSource.PlayOneShot(woodStepsClips[UnityEngine.Random.Range(0, woodStepsClips.Length - 1)]);
+                        Debug.Log("Wood");
                         break;
                     case "Floor/Wet":
                         _SFXAudioSource.PlayOneShot(wetStepsClips[UnityEngine.Random.Range(0, wetStepsClips.Length - 1)]);
+                        Debug.Log("Wet");
+                        break;
+                    case "Floor/Dirt":
+                        _SFXAudioSource.PlayOneShot(dirtStepsClips[UnityEngine.Random.Range(0, dirtStepsClips.Length - 1)]);
+                        Debug.Log("Dirt");
                         break;
                     default:
-                        _SFXAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
+                        _SFXAudioSource.PlayOneShot(dirtStepsClips[UnityEngine.Random.Range(0, dirtStepsClips.Length - 1)]);
+                        Debug.Log("Default");
                         break;
                 }
             }
