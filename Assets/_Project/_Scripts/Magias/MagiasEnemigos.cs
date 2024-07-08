@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 public class MagiasEnemigos : Magias
 {
@@ -10,14 +10,17 @@ public class MagiasEnemigos : Magias
     [SerializeField] private float rangoEfecto;
     [SerializeField] private LayerMask whatCanElectrocutar;
     public ParticleSystem electrocutadoParticle;
+    [SerializeField] private GameObject estadoUI;
+    public TextMeshProUGUI textoEstado;
+    public float tiempoAturdido;
 
-    private AIManager aiManager;
     private AIUnit aiUnit;
 
     private void Start()
     {
         aiUnit = GetComponent<AIUnit>();
-        aiManager = FindAnyObjectByType<AIManager>();
+
+        estadoUI.SetActive(false);
     }
     public override void CambiarMagia(MagiasDisponibles magiaHit)
     {
@@ -27,29 +30,45 @@ public class MagiasEnemigos : Magias
 
     public override void CambiarEstado()
     {
-        if (magiaAnterior != MagiasDisponibles.Agua && magia == MagiasDisponibles.Fuego)
-        {
-            estado = EstadosDisponibles.EnLlamas;
-        }
-        else if (magiaAnterior == MagiasDisponibles.Agua && magia == MagiasDisponibles.Rayo)
-        {
-            estado = EstadosDisponibles.Electrocutado;
-        }
-        else if (magiaAnterior != MagiasDisponibles.Agua && magia == MagiasDisponibles.Agua)
+        estadoUI.SetActive(true);
+        if ((magia == MagiasDisponibles.Agua) && (magiaAnterior ==MagiasDisponibles.Null))
         {
             estado = EstadosDisponibles.Mojado;
+            textoEstado.text = estado.ToString();
+        }
+        else if ((magia == MagiasDisponibles.Fuego) && (magiaAnterior != MagiasDisponibles.Agua))
+        {
+            estado = EstadosDisponibles.EnLlamas;
+            textoEstado.text = estado.ToString();
+        }
+        else if ((magia == MagiasDisponibles.Rayo) && (magiaAnterior != MagiasDisponibles.Agua))
+        {
+            estado = EstadosDisponibles.ConCarga;
+            textoEstado.text = estado.ToString();
+        }
+        else if ((magiaAnterior == MagiasDisponibles.Agua && magia == MagiasDisponibles.Rayo) || (magiaAnterior == MagiasDisponibles.Rayo && magia == MagiasDisponibles.Agua))
+        {
+            estado = EstadosDisponibles.Electrocutado;
+            textoEstado.text = estado.ToString();
+        }
+        else if ((magiaAnterior == MagiasDisponibles.Fuego && magia == MagiasDisponibles.Agua) || (magiaAnterior == MagiasDisponibles.Agua && magia == MagiasDisponibles.Fuego))
+        {
+            estado = EstadosDisponibles.Evaporacion;
+            textoEstado.text = estado.ToString();
         }
         else
         {
             estado = EstadosDisponibles.Null;
         }
+
+        ComprobarEstado();
     }
 
     public override void ComprobarEstado()
     {
-        if (estado == EstadosDisponibles.EnLlamas)
+        if (estado == EstadosDisponibles.Evaporacion)
         {
-
+            Aturdido();
         }
         else if (estado == EstadosDisponibles.Electrocutado)
         {
@@ -75,11 +94,19 @@ public class MagiasEnemigos : Magias
                 if (enemigo != null && enemigo.estado != EstadosDisponibles.Electrocutado && enemigo.estado == EstadosDisponibles.Mojado)
                 {
                     enemigo.estado = EstadosDisponibles.Electrocutado;
-                    enemigo.ComprobarEstado();
+                    //enemigo.ComprobarEstado();
                 }
             }
             yield return new WaitForSeconds(0.5f); // Ajusta la frecuencia del daño según sea necesario.
         }
+    }
+    private IEnumerator Aturdido()
+    {
+        float _rangoVision = aiUnit.rangoVision;
+
+        aiUnit.rangoVision = 0;
+        yield return new WaitForSeconds(tiempoAturdido);
+        aiUnit.rangoVision = _rangoVision;
     }
     private void OnDrawGizmosSelected()
     {

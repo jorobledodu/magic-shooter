@@ -35,15 +35,7 @@ public class Player_InputHandle : MonoBehaviour
     private void Awake()
     {
         #region Instance
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        instance = this;
         #endregion
 
         playerInputActionAsset = new PlayerInputActionAsset();

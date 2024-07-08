@@ -98,14 +98,14 @@ public class FPS_Controller : MonoBehaviour
                         Debug.Log(magiasHit);
                         magiasHit.CambiarMagia(magiaActiva);
                         magiasHit.CambiarEstado();
-                        magiasHit.ComprobarEstado();
+                        //magiasHit.ComprobarEstado();
                     }
                     else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
                     {
                         Debug.Log(magiasHitP);
                         magiasHitP.CambiarMagia(magiaActiva);
                         magiasHitP.CambiarEstado();
-                        magiasHitP.ComprobarEstado();
+                        //magiasHitP.ComprobarEstado();
                     }
                 }
                 else if (rayHit.collider.CompareTag("NPC"))
@@ -120,21 +120,9 @@ public class FPS_Controller : MonoBehaviour
                     Instantiate(_prefabHitHole, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
                 }
-
-                if (rayHit.collider.CompareTag("Floor/Wet"))
-                {
-                    //Comprobar si el objetivo tiene el script "Magias"
-                    if (rayHit.transform.TryGetComponent(out Magias magiasHit))
-                    {
-                        Debug.Log(magiasHit);
-                        magiasHit.CambiarMagia(magiaActiva);
-                        magiasHit.CambiarEstado();
-                        magiasHit.ComprobarEstado();
-                    }
-                }
             }
 
-            //_shotHitTest.transform.position = rayHit.point;
+            _shotHitTest.transform.position = rayHit.point;
 
             //Sound
             _SFXAudioSource.PlayOneShot(_pistolShotAudio);

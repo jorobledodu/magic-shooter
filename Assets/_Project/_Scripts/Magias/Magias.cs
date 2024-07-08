@@ -13,6 +13,8 @@ public enum EstadosDisponibles
 {
     Null,
     EnLlamas,
+    Evaporacion,
+    ConCarga,
     Electrocutado,
     Mojado
 }

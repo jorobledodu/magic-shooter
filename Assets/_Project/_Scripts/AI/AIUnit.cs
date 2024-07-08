@@ -28,6 +28,8 @@ public class AIUnit : MonoBehaviour
     //Estadisticas
     private string estadoInicial; 
     public string element;
+    [SerializeField] private GameObject estadoUI;
+    [SerializeField] private GameObject vidaUI;
     [SerializeField] private float vidaMaxima;
     public float vidaActual;
     [SerializeField] private Image healthBarFill;
@@ -36,11 +38,12 @@ public class AIUnit : MonoBehaviour
     [SerializeField] private float healthValueIncrement = 1.0f;
     [SerializeField] private float healthTimeIncrement = 0.1f;
     private Coroutine regeneratingHealth;
-    [SerializeField] private float rangoVision;
+    public float rangoVision;
     [SerializeField] private float rangoAtaque;
     public bool canMover = true;
     public bool inRangoVision, inRangoAtaque, inGolpeado, inAtaque;
     public LayerMask playerLayer;
+    [SerializeField] private LayerMask floorLayer;
     public AudioClip audioVivo, audioGolpeado, audioAtaque, audioMuerto;
 
     private void Awake()
@@ -56,26 +59,30 @@ public class AIUnit : MonoBehaviour
         ElegirEstadoInicial();
 
         vidaActual = vidaMaxima;
+
+        vidaUI.SetActive(false);
     }
     private void Update()
     {
-        if (magias.magia == MagiasDisponibles.Agua)
-        {
-            mojadoParticleText.gameObject.SetActive(true);
-            conCargaParticleText.gameObject.SetActive(false);
-            StartCoroutine(MojadoTextCoroutine());
-        }
-        else if (magias.magia == MagiasDisponibles.Rayo)
-        {
-            mojadoParticleText.gameObject.SetActive(false);
-            conCargaParticleText.gameObject.SetActive(true);
-            StartCoroutine(ConCargaTextCoroutine());
-        }
-        else
-        {
-            mojadoParticleText.gameObject.SetActive(false);
-            conCargaParticleText.gameObject.SetActive(false);
-        }
+        DetectarSuelo();
+
+        //if (magias.magia == MagiasDisponibles.Agua)
+        //{
+        //    mojadoParticleText.gameObject.SetActive(true);
+        //    conCargaParticleText.gameObject.SetActive(false);
+        //    StartCoroutine(MojadoTextCoroutine());
+        //}
+        //else if (magias.magia == MagiasDisponibles.Rayo)
+        //{
+        //    mojadoParticleText.gameObject.SetActive(false);
+        //    conCargaParticleText.gameObject.SetActive(true);
+        //    StartCoroutine(ConCargaTextCoroutine());
+        //}
+        //else
+        //{
+        //    mojadoParticleText.gameObject.SetActive(false);
+        //    conCargaParticleText.gameObject.SetActive(false);
+        //}
 
 
         inRangoAtaque = Vector3.Distance(transform.position, jugador.transform.position) <= rangoAtaque;
@@ -96,6 +103,18 @@ public class AIUnit : MonoBehaviour
         else if (jugador != null && !inAtaque && inRangoAtaque)
         {
             Ataque(jugador);
+        }
+    }
+
+    private void DetectarSuelo()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer, QueryTriggerInteraction.Collide))
+        {
+            if (hit.collider.CompareTag("Floor/Wet"))
+            {
+                magias.CambiarMagia(MagiasDisponibles.Agua);
+                magias.CambiarEstado();
+            }
         }
     }
 
@@ -165,6 +184,8 @@ public class AIUnit : MonoBehaviour
     }
     private void Golpeado()
     {
+        vidaUI.SetActive(true);
+
         canMover = false;
         //agent.destination = this.transform.position;
         agent.SetDestination(this.transform.position);
@@ -180,6 +201,8 @@ public class AIUnit : MonoBehaviour
     private void Morir()
     {
         ////TODOO: Contador para destuir el game object
+        vidaUI.SetActive(false);
+        estadoUI.SetActive(false);
         ////TODOO: Sonido de muerte
         AIAudioSource.PlayOneShot(audioMuerto);
 
@@ -255,18 +278,18 @@ public class AIUnit : MonoBehaviour
         regeneratingHealth = null;
     }
 
-    private IEnumerator MojadoTextCoroutine()
-    {
-        mojadoParticleText.Play();
-        yield return new WaitForSeconds(2f);
-        mojadoParticleText.Play();
-    }
-    private IEnumerator ConCargaTextCoroutine()
-    {
-        conCargaParticleText.Play();
-        yield return new WaitForSeconds(2f);
-        conCargaParticleText.Play();
-    }
+    //private IEnumerator MojadoTextCoroutine()
+    //{
+    //    mojadoParticleText.Play();
+    //    yield return new WaitForSeconds(2f);
+    //    mojadoParticleText.Play();
+    //}
+    //private IEnumerator ConCargaTextCoroutine()
+    //{
+    //    conCargaParticleText.Play();
+    //    yield return new WaitForSeconds(2f);
+    //    conCargaParticleText.Play();
+    //}
     public void LookAt(GameObject objetivo)
     {
         //Solo hacer todo esto si el feedback del enemigo no es bueno
