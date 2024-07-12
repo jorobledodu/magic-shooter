@@ -9,14 +9,22 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public List<AIUnit> aiUnitsInScene;
+    [Header("Contador regresivo")]
+    public bool contadorRegresivo = false;
     [SerializeField] private TextMeshProUGUI textoContador;
     [SerializeField] private float tiempoMaximo = 300f; // 5 minutos
     private float tiempoInicial;
-    public bool gameStarted = false;
     [SerializeField] private Color colorPorDefecto = Color.white;
     [SerializeField] private Color colorAlarma = Color.red;
     [Range(0, 1)]
     [SerializeField] private float porcentajeAlarma = 0.4f; // 40% del tiempo máximo
+
+    [Header("Contador progresivo")]
+    public bool contadorProgresivo = false;
+    public float tiempoTranscurrido;
+
+    public bool gameStarted = false;
+
 
     private void Awake()
     {
@@ -28,7 +36,18 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        FormatoTextoContador(tiempoMaximo);
+        if (contadorRegresivo == true && contadorProgresivo == false)
+        {
+            FormatoTextoContador(tiempoMaximo);
+        }
+        else if (contadorRegresivo == false && contadorProgresivo == true)
+        {
+            FormatoTextoContador(tiempoTranscurrido);
+        }
+        else
+        {
+            return;
+        }
 
         // Inicializar la lista
         aiUnitsInScene = new List<AIUnit>();
@@ -55,28 +74,36 @@ public class GameManager : MonoBehaviour
     {
         if (gameStarted)
         {
-            if (tiempoMaximo > 0)
+            if (contadorRegresivo == true && contadorProgresivo == false)
             {
-                tiempoMaximo -= Time.deltaTime;
+                if (tiempoMaximo > 0)
+                {
+                    tiempoMaximo -= Time.deltaTime;
 
-                // Si el tiempo restante es inferior a un porcentaje del tiempo inicial, cambiar el color del texto
-                if (tiempoMaximo < porcentajeAlarma * tiempoInicial)
-                {
-                    textoContador.color = colorAlarma;
+                    // Si el tiempo restante es inferior a un porcentaje del tiempo inicial, cambiar el color del texto
+                    if (tiempoMaximo < porcentajeAlarma * tiempoInicial)
+                    {
+                        textoContador.color = colorAlarma;
+                    }
+                    else
+                    {
+                        textoContador.color = colorPorDefecto;
+                    }
                 }
-                else
+                else if (tiempoMaximo <= 0)
                 {
-                    textoContador.color = colorPorDefecto;
+                    tiempoMaximo = 0;
+                    // Condición: si los enemigos están muertos, ganas; si no, pierdes
+                    VerificarCondicionVictoria();
                 }
+
+                FormatoTextoContador(tiempoMaximo);
             }
-            else if (tiempoMaximo <= 0)
+            else if (contadorRegresivo == false && contadorProgresivo == true)
             {
-                tiempoMaximo = 0;
-                // Condición: si los enemigos están muertos, ganas; si no, pierdes
-                VerificarCondicionVictoria();
+                tiempoTranscurrido += Time.deltaTime;
+                FormatoTextoContador(tiempoTranscurrido);
             }
-
-            FormatoTextoContador(tiempoMaximo);
         }
     }
     private void FormatoTextoContador(float tiempo)

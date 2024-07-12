@@ -36,7 +36,10 @@ public class UI_Controller : MonoBehaviour
     public GameObject graficosMenuFirstOption;
     public TMP_Dropdown modoPantallaDropdown;
     public TMP_Dropdown resolucionDropdown;
-    public TextMeshProUGUI resolucionText; 
+    public TextMeshProUGUI resolucionText;
+
+    [Header("Dialogos")]
+    [SerializeField] private GameObject panelDialogo;
 
     public bool pausa;
 
@@ -105,18 +108,25 @@ public class UI_Controller : MonoBehaviour
 
         if (pausa)
         {
+            StopAllCoroutines();
+
             Player_InputHandle.instance.enabled = false;
 
-            playerUI.SetActive(false);
             pauseUI.SetActive(true);
 
             Time.timeScale = 0f;
         }
         else if (!pausa)
         {
-            Player_InputHandle.instance.enabled = true;
+            if (panelDialogo.activeInHierarchy)
+            {
+                Player_InputHandle.instance.enabled = false;
+            }
+            else
+            {
+                Player_InputHandle.instance.enabled = true;
+            }
 
-            playerUI.SetActive(true);
             pauseUI.SetActive(false);
 
             Time.timeScale = 1f;

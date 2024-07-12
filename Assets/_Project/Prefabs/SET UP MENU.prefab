@@ -1706,9 +1706,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WASD/Joystick Izq - Movimiento\nRaton/Joystick Der - Movimiento camara\nEspacio/Boton
-    sur - Salto\nShift Izq/Pulsar joystick Izq(Mantener) - Correr\nCtrl Izq/BotonEste
-    - Agacharse\nF/Boton Oeste - Interactuar\nRaton Izq/Trigger Der - Disparo\n1,2,3,4/D-Pad
+  m_text: "WASD/Left Stick - Movimiento\nMouse/Right Stick - Movimiento camara\nSpace/Boton
+    South - Salto\nLeft Shift/Left Stick Hold - Correr\nLeft Ctrl/Right Stick Press
+    - Agacharse\nF/Button East - Interactuar\nLeft Button Mouse/Right Trigger - Disparo\n1,2,3,4/D-Pad
     - Cambiar magia \nEsc/Start o Select - Pausa"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

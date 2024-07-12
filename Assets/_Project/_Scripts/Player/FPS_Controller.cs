@@ -7,6 +7,16 @@ using UnityEngine.InputSystem;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.VFX;
 
+[Serializable]
+public class ListaMagias
+{
+    [SerializeField] private bool activa;
+    [SerializeField] private MagiasDisponibles magia;
+    [SerializeField] private GameObject VFX;
+
+    public bool IsActiva => activa;
+    public MagiasDisponibles TipoMagia => magia;
+}
 public class FPS_Controller : MonoBehaviour
 {
     public bool CanShoot { get; set; } = true;
@@ -38,6 +48,7 @@ public class FPS_Controller : MonoBehaviour
     public TextMeshProUGUI _bulletsText;
 
     //Magias
+    public ListaMagias[] listaMagias;
     public bool magia_rayo;
     public bool magia_agua;
     public bool magia_fuego;

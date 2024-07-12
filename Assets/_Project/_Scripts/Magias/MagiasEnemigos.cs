@@ -9,7 +9,8 @@ public class MagiasEnemigos : Magias
     public EstadosDisponibles estado;
     [SerializeField] private float rangoEfecto;
     [SerializeField] private LayerMask whatCanElectrocutar;
-    public ParticleSystem electrocutadoParticle;
+    public ParticleSystem electrocutadoParticula;
+    public GameObject vaporParticula;
     [SerializeField] private GameObject estadoUI;
     public TextMeshProUGUI textoEstado;
     public float tiempoAturdido;
@@ -22,6 +23,7 @@ public class MagiasEnemigos : Magias
 
         estadoUI.SetActive(false);
     }
+
     public override void CambiarMagia(MagiasDisponibles magiaHit)
     {
         magiaAnterior = magia;
@@ -31,56 +33,61 @@ public class MagiasEnemigos : Magias
     public override void CambiarEstado()
     {
         estadoUI.SetActive(true);
-        if ((magia == MagiasDisponibles.Agua) && (magiaAnterior ==MagiasDisponibles.Null))
-        {
-            estado = EstadosDisponibles.Mojado;
-            textoEstado.text = estado.ToString();
-        }
-        else if ((magia == MagiasDisponibles.Fuego) && (magiaAnterior != MagiasDisponibles.Agua))
-        {
-            estado = EstadosDisponibles.EnLlamas;
-            textoEstado.text = estado.ToString();
-        }
-        else if ((magia == MagiasDisponibles.Rayo) && (magiaAnterior != MagiasDisponibles.Agua))
-        {
-            estado = EstadosDisponibles.ConCarga;
-            textoEstado.text = estado.ToString();
-        }
-        else if ((magiaAnterior == MagiasDisponibles.Agua && magia == MagiasDisponibles.Rayo) || (magiaAnterior == MagiasDisponibles.Rayo && magia == MagiasDisponibles.Agua))
-        {
-            estado = EstadosDisponibles.Electrocutado;
-            textoEstado.text = estado.ToString();
-        }
-        else if ((magiaAnterior == MagiasDisponibles.Fuego && magia == MagiasDisponibles.Agua) || (magiaAnterior == MagiasDisponibles.Agua && magia == MagiasDisponibles.Fuego))
-        {
-            estado = EstadosDisponibles.Evaporacion;
-            textoEstado.text = estado.ToString();
-        }
-        else
-        {
-            estado = EstadosDisponibles.Null;
-        }
+
+        estado = DeterminarNuevoEstado(magia, magiaAnterior);
+        textoEstado.text = estado.ToString();
 
         ComprobarEstado();
     }
 
+    private EstadosDisponibles DeterminarNuevoEstado(MagiasDisponibles magia, MagiasDisponibles magiaAnterior)
+    {
+        if ((magia == MagiasDisponibles.Rayo && magiaAnterior == MagiasDisponibles.Agua) ||
+            (magia == MagiasDisponibles.Agua && magiaAnterior == MagiasDisponibles.Rayo))
+        {
+            return EstadosDisponibles.Electrocutado;
+        }
+        if ((magia == MagiasDisponibles.Fuego && magiaAnterior == MagiasDisponibles.Agua) ||
+            (magia == MagiasDisponibles.Agua && magiaAnterior == MagiasDisponibles.Fuego))
+        {
+            return EstadosDisponibles.Evaporacion;
+        }
+        if (magia == MagiasDisponibles.Agua)
+        {
+            return EstadosDisponibles.Mojado;
+        }
+        if (magia == MagiasDisponibles.Fuego)
+        {
+            return EstadosDisponibles.EnLlamas;
+        }
+        if (magia == MagiasDisponibles.Rayo)
+        {
+            return EstadosDisponibles.ConCarga;
+        }
+
+        return EstadosDisponibles.Null;
+    }
+
     public override void ComprobarEstado()
     {
-        if (estado == EstadosDisponibles.Evaporacion)
+        switch (estado)
         {
-            Aturdido();
+            case EstadosDisponibles.Evaporacion:
+                StartCoroutine(Aturdido());
+                break;
+            case EstadosDisponibles.Electrocutado:
+                AplicarEfectoElectrocutado();
+                break;
+                // Agregar más casos si es necesario
         }
-        else if (estado == EstadosDisponibles.Electrocutado)
-        {
-            aiUnit.RecibirDaño(999f);
-            electrocutadoParticle.gameObject.SetActive(true);
-            electrocutadoParticle.Play();
-            StartCoroutine(ElectrocutaUnidadesEnRango());
-        }
-        else if (estado == EstadosDisponibles.Mojado)
-        {
+    }
 
-        }
+    private void AplicarEfectoElectrocutado()
+    {
+        aiUnit.RecibirDaño(999f);
+        electrocutadoParticula.gameObject.SetActive(true);
+        electrocutadoParticula.Play();
+        StartCoroutine(ElectrocutaUnidadesEnRango());
     }
     private IEnumerator ElectrocutaUnidadesEnRango()
     {
@@ -94,19 +101,22 @@ public class MagiasEnemigos : Magias
                 if (enemigo != null && enemigo.estado != EstadosDisponibles.Electrocutado && enemigo.estado == EstadosDisponibles.Mojado)
                 {
                     enemigo.estado = EstadosDisponibles.Electrocutado;
-                    //enemigo.ComprobarEstado();
+                    enemigo.ComprobarEstado();
                 }
             }
             yield return new WaitForSeconds(0.5f); // Ajusta la frecuencia del daño según sea necesario.
         }
     }
+
     private IEnumerator Aturdido()
     {
-        float _rangoVision = aiUnit.rangoVision;
+        float rangoVisionOriginal = aiUnit.rangoVision;
 
+        vaporParticula.SetActive(true);
         aiUnit.rangoVision = 0;
         yield return new WaitForSeconds(tiempoAturdido);
-        aiUnit.rangoVision = _rangoVision;
+        vaporParticula.SetActive(false);
+        aiUnit.rangoVision = rangoVisionOriginal;
     }
     private void OnDrawGizmosSelected()
     {

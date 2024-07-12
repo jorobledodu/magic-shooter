@@ -23,22 +23,9 @@ public class Magias : MonoBehaviour
 {
     public MagiasDisponibles magia;
 
-    private void Update()
-    {
-        
-    }
+    public virtual void CambiarMagia(MagiasDisponibles magiaHit) { }
 
-    public virtual void CambiarMagia(MagiasDisponibles magiaHit)
-    {
+    public virtual void CambiarEstado() { }
 
-    }
-
-    public virtual void CambiarEstado()
-    {
-
-    }
-
-    public virtual void ComprobarEstado()
-    {
-    }
+    public virtual void ComprobarEstado() { }
 }
