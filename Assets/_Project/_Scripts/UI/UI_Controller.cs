@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -115,6 +116,8 @@ public class UI_Controller : MonoBehaviour
             pauseUI.SetActive(true);
 
             Time.timeScale = 0f;
+
+            PrimeraOpcion();
         }
         else if (!pausa)
         {
@@ -167,6 +170,10 @@ public class UI_Controller : MonoBehaviour
 
         obj.SetActive(true);
 
+        PrimeraOpcion();
+    }
+    public void PrimeraOpcion()
+    {
         if (inicioMenu.activeInHierarchy == true)
         {
             eventSystem.SetSelectedGameObject(inicioMenuFirstOption);

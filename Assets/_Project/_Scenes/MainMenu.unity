@@ -210,11 +210,37 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WASD/Left Stick - Movimiento\nMouse/Right Stick - Movimiento camara\nSpace/Boton
-    South - Salto\nLeft Shift/Left Stick Hold - Correr\nLeft Ctrl/Right Stick Press
-    - Agacharse\nF/Button East - Interactuar\nLeft Button Mouse/Right Trigger - Disparo\n1,2,3,4/D-Pad
-    - Cambiar magia \nEsc/Start o Select - Pausa\n\nMenu\nWASD/D-Pad - Mover en el
-    menu\nSpace/Button South - Aceptar"
+  m_text: 'Game
+
+    WASD/Left Stick - Move
+
+    Mouse/Right Stick - Camera Move
+
+    Space/Boton
+    South - Jump
+
+    Left Shift/Left Stick Hold - Run
+
+    Left Ctrl/Right Stick
+    Press - Crouch
+
+    F/Button East - Interact
+
+    Left Button Mouse/Right Trigger
+    - Shoot
+
+    Q, E/Left, Right Shoulder - Change Magic
+
+    Esc/Start o Select
+    - Pausa
+
+
+    Menu
+
+    WASD/D-Pad - Mover en el menu
+
+    Space/Button South
+    - Aceptar'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -241,7 +267,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.15
+  m_fontSize: 20.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

@@ -14,6 +14,8 @@ public class MagiasEnemigos : Magias
     [SerializeField] private GameObject estadoUI;
     public TextMeshProUGUI textoEstado;
     public float tiempoAturdido;
+    public float cleanEstadoTiempo;
+    private Coroutine cleanEstadoCorrutina = null;
 
     private AIUnit aiUnit;
 
@@ -35,7 +37,11 @@ public class MagiasEnemigos : Magias
         estadoUI.SetActive(true);
 
         estado = DeterminarNuevoEstado(magia, magiaAnterior);
-        textoEstado.text = estado.ToString();
+        if (estado.ToString() == "Null")
+        {
+            textoEstado.text = " ";
+        }
+        else textoEstado.text = estado.ToString();
 
         ComprobarEstado();
     }
@@ -68,15 +74,21 @@ public class MagiasEnemigos : Magias
         return EstadosDisponibles.Null;
     }
 
+
     public override void ComprobarEstado()
     {
         switch (estado)
         {
             case EstadosDisponibles.Evaporacion:
                 StartCoroutine(Aturdido());
+                CleanEstado();
+                magia = MagiasDisponibles.Null;
+                magiaAnterior = MagiasDisponibles.Null;
                 break;
             case EstadosDisponibles.Electrocutado:
                 AplicarEfectoElectrocutado();
+                magia = MagiasDisponibles.Null;
+                magiaAnterior = MagiasDisponibles.Null;
                 break;
                 // Agregar más casos si es necesario
         }
@@ -117,6 +129,28 @@ public class MagiasEnemigos : Magias
         yield return new WaitForSeconds(tiempoAturdido);
         vaporParticula.SetActive(false);
         aiUnit.rangoVision = rangoVisionOriginal;
+    }
+    public override void CleanEstado()
+    {
+        if (cleanEstadoCorrutina != null)
+        {
+            StopCoroutine(cleanEstadoCorrutina);
+        }
+        cleanEstadoCorrutina = StartCoroutine(CleanEstadoCorrutina());
+    }
+    private IEnumerator CleanEstadoCorrutina()
+    {
+        Debug.Log("Iniciando limpieza de estado");
+        yield return new WaitForSeconds(cleanEstadoTiempo);
+        Debug.Log("Estado limpiado");
+        estado = EstadosDisponibles.Null;  // Asegúrate de tener acceso a `estado`
+        cleanEstadoCorrutina = null;
+
+        if (estado.ToString() == "Null")
+        {
+            textoEstado.text = " ";
+        }
+        else textoEstado.text = estado.ToString();
     }
     private void OnDrawGizmosSelected()
     {

@@ -20,14 +20,11 @@ public class Player_InputHandle : MonoBehaviour
     private InputAction interactionAction;
     private InputAction shootAction;
     private InputAction reloadAction;
-    private InputAction changeMagicNullAction;
-    private InputAction changeMagic1Action;
-    private InputAction changeMagic2Action;
-    private InputAction changeMagic3Action;
+    private InputAction changeMagicAction;
     #endregion
 
     public Vector2 MoveInput {  get; private set; }
-    public Vector2 LookInput;
+    public Vector2 LookInput {  get; private set; }
     public bool RunTriggered { get; private set; }
     public bool JumpTriggered { get; private set; }
     public bool CrouchTriggered { get; private set; }
@@ -49,10 +46,7 @@ public class Player_InputHandle : MonoBehaviour
         interactionAction = playerInputActionAsset.Player.Interaction;
         shootAction = playerInputActionAsset.Player.Shoot;
         reloadAction = playerInputActionAsset.Player.Reload;
-        changeMagicNullAction = playerInputActionAsset.Player.ChangeMagicNull;
-        changeMagic1Action = playerInputActionAsset.Player.ChangeMagic1;
-        changeMagic2Action = playerInputActionAsset.Player.ChangeMagic2;
-        changeMagic3Action = playerInputActionAsset.Player.ChangeMagic3;
+        changeMagicAction = playerInputActionAsset.Player.ChangeMagic;
         #endregion
     }
     private void OnEnable()
@@ -67,10 +61,7 @@ public class Player_InputHandle : MonoBehaviour
         interactionAction.Enable();
         shootAction.Enable();
         reloadAction.Enable();
-        changeMagicNullAction.Enable();
-        changeMagic1Action.Enable();
-        changeMagic2Action.Enable();
-        changeMagic3Action.Enable();
+        changeMagicAction.Enable();
 
         SubscribeInputs();
     }
@@ -86,10 +77,7 @@ public class Player_InputHandle : MonoBehaviour
         interactionAction.Disable();
         shootAction.Disable();
         reloadAction.Disable();
-        changeMagicNullAction.Disable();
-        changeMagic1Action.Disable();
-        changeMagic2Action.Disable();
-        changeMagic3Action.Disable();
+        changeMagicAction.Disable();
 
         UnsubscribeInputs();
     }
@@ -117,11 +105,7 @@ public class Player_InputHandle : MonoBehaviour
 
         reloadAction.performed += onReload;
 
-        changeMagicNullAction.performed += onChangeMagicNull;
-        changeMagic1Action.performed += onChangeMagic1;
-        changeMagic2Action.performed += onChangeMagic2;
-        changeMagic3Action.performed += onChangeMagic3;
-
+        changeMagicAction.performed += onChangeMagic;
     }
 
     private void UnsubscribeInputs()
@@ -147,11 +131,7 @@ public class Player_InputHandle : MonoBehaviour
 
         reloadAction.performed -= onReload;
 
-        changeMagicNullAction.performed -= onChangeMagicNull;
-        changeMagic1Action.performed -= onChangeMagic1;
-        changeMagic2Action.performed -= onChangeMagic2;
-        changeMagic3Action.performed -= onChangeMagic3;
-
+        changeMagicAction.performed -= onChangeMagic;
     }
 
     private void onMove(InputAction.CallbackContext ctx)
@@ -204,18 +184,15 @@ public class Player_InputHandle : MonoBehaviour
         CrouchTriggered = false;
     }
 
-    private void onInteraction(InputAction.CallbackContext context)
+    private void onInteraction(InputAction.CallbackContext ctx)
     {
         if (FP_Controller.instance.CanInteract)
         {
             FP_Controller.instance.HandleInteractionInput();
         }
     }
-    private void onInteractionCanceled(InputAction.CallbackContext context)
-    {
-    }
 
-    private void onShoot(InputAction.CallbackContext context)
+    private void onShoot(InputAction.CallbackContext ctx)
     {
         if (FPS_Controller.instance.CanShoot)
         {
@@ -223,40 +200,20 @@ public class Player_InputHandle : MonoBehaviour
         }
     }
 
-    private void onReload(InputAction.CallbackContext context)
+    private void onReload(InputAction.CallbackContext ctx)
     {
         if (FPS_Controller.instance.CanReload)
         {
             FPS_Controller.instance.Reload();
         }
     }
+    private void onChangeMagic(InputAction.CallbackContext ctx)
+    {
+        float valor = ctx.ReadValue<float>();
 
-    private void onChangeMagicNull(InputAction.CallbackContext context)
-    {
         if (FPS_Controller.instance.CanChangeMagic)
         {
-            FPS_Controller.instance.ChangeMagicNull();
-        }
-    }
-    private void onChangeMagic1(InputAction.CallbackContext context)
-    {
-        if (FPS_Controller.instance.CanChangeMagic)
-        {
-            FPS_Controller.instance.ChangeMagic1();
-        }
-    }
-    private void onChangeMagic2(InputAction.CallbackContext context)
-    {
-        if (FPS_Controller.instance.CanChangeMagic)
-        {
-            FPS_Controller.instance.ChangeMagic2();
-        }
-    }
-    private void onChangeMagic3(InputAction.CallbackContext context)
-    {
-        if (FPS_Controller.instance.CanChangeMagic)
-        {
-            FPS_Controller.instance.ChangeMagic3();
+            FPS_Controller.instance.ChangeMagic(valor);
         }
     }
 }

@@ -28,4 +28,6 @@ public class Magias : MonoBehaviour
     public virtual void CambiarEstado() { }
 
     public virtual void ComprobarEstado() { }
+
+    public virtual void CleanEstado() {  }
 }

@@ -15,13 +15,14 @@ public class AIUnit : MonoBehaviour
     private Animator animator;
     public GameObject jugador;
     private Ragdoll ragdoll;
-    public AudioSource AIAudioSource;
+    //public AudioSource AIAudioSource;
     private Magias magias;
     public bool muerto;
-         
+
     //Parametros
 
     //Estadisticas
+    public GameObject canvas;
     private string estadoInicial; 
     public string element;
     [SerializeField] private GameObject estadoUI;
@@ -62,7 +63,11 @@ public class AIUnit : MonoBehaviour
     }
     private void Update()
     {
-        if (muerto) return; // Si está muerto, no hacer nada
+        if (muerto)
+        {
+            canvas.SetActive(false);
+            return; // Si está muerto, no hacer nada
+        }
 
         DetectarSuelo();
 
@@ -112,13 +117,20 @@ public class AIUnit : MonoBehaviour
     }
     private void DetectarSuelo()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer, QueryTriggerInteraction.Collide))
+        if (magias.magia != MagiasDisponibles.Agua)
         {
-            if (hit.collider.CompareTag("Floor/Wet"))
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 3, floorLayer, QueryTriggerInteraction.Collide))
             {
-                magias.CambiarMagia(MagiasDisponibles.Agua);
-                magias.CambiarEstado();
+                if (hit.collider.CompareTag("Floor/Wet"))
+                {
+                    magias.CambiarMagia(MagiasDisponibles.Agua);
+                    magias.CambiarEstado();
+                }
             }
+        }
+        else
+        {
+            return;
         }
     }
 
@@ -185,14 +197,12 @@ public class AIUnit : MonoBehaviour
         animator.SetBool("isGolpeado", true);
 
         ////TODOO: Sonido al ser golpeado
-        AIAudioSource.PlayOneShot(audioGolpeado);
     }
     private void Morir()
     {
         vidaUI.SetActive(false);
         estadoUI.SetActive(false);
         ////TODOO: Sonido de muerte
-        AIAudioSource.PlayOneShot(audioMuerto);
 
         canMover = false;
 

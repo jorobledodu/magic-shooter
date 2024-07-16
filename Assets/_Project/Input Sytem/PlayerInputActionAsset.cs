@@ -100,40 +100,13 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ChangeMagicNull"",
+                    ""name"": ""ChangeMagic"",
                     ""type"": ""Button"",
-                    ""id"": ""4291a93e-a7cb-4ecc-b8dc-f3c56e2fd3dc"",
+                    ""id"": ""659dc483-e7d4-40c1-ad92-b38547703c09"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ChangeMagic1"",
-                    ""type"": ""Button"",
-                    ""id"": ""5ed40dff-4b8f-4afa-bc49-5a0eaf651245"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""ChangeMagic2"",
-                    ""type"": ""Button"",
-                    ""id"": ""ba114d13-a151-44c0-91bd-f033179d04fc"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""ChangeMagic3"",
-                    ""type"": ""Button"",
-                    ""id"": ""a1e984ce-57ac-4bbb-bd44-0c0703870d13"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -219,7 +192,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                     ""id"": ""11d46a2b-995e-476f-ac3f-5748ec2ee286"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": ""StickDeadzone(min=0.2),ScaleVector2(x=1.5,y=1.5)"",
+                    ""processors"": ""StickDeadzone(min=0.2),ScaleVector2(x=1.2,y=1.2)"",
                     ""groups"": """",
                     ""action"": ""Look"",
                     ""isComposite"": false,
@@ -358,92 +331,103 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""1c914695-9717-4df2-ac13-e22a223134e1"",
-                    ""path"": ""<Keyboard>/3"",
+                    ""name"": ""Up/Down Scroll [Mouse]"",
+                    ""id"": ""33e9b75f-92bb-49d7-9068-e666ecc2cb14"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeMagic3"",
-                    ""isComposite"": false,
+                    ""action"": ""ChangeMagic"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""42015a90-1b80-4ee1-aa20-a36a62cd8651"",
-                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""name"": ""negative"",
+                    ""id"": ""e53fe83d-ac01-4796-87f0-f456d1368c78"",
+                    ""path"": ""<Mouse>/scroll/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeMagic3"",
+                    ""action"": ""ChangeMagic"",
                     ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""a39a8e7a-310c-4c3b-953a-afbccc40e232"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeMagic"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Q/E [Keyboard]"",
+                    ""id"": ""6cd0fcc1-2fdb-485f-bc17-479d721ee625"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeMagic"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""2a18ddb9-e3b5-4036-82a0-8069fa3f5934"",
-                    ""path"": ""<Keyboard>/1"",
+                    ""name"": ""negative"",
+                    ""id"": ""1babfbe5-e74c-457e-adae-1a8ed267dac4"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeMagic1"",
+                    ""action"": ""ChangeMagic"",
                     ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""9412b90d-8c8f-4190-a705-e9c51494ebd6"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeMagic"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Left/Right Shoulder [Gamepad]"",
+                    ""id"": ""875bbdf0-d6eb-40db-b238-e213d5c3c1ee"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeMagic"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""e336f800-f2b8-41c6-8d75-c6538aa00a70"",
-                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""name"": ""negative"",
+                    ""id"": ""c5bb332c-736b-4f8b-8737-9d2d7e65cb66"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeMagic1"",
+                    ""action"": ""ChangeMagic"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""7bd9827c-9171-424f-ac82-8a903504c70c"",
-                    ""path"": ""<Keyboard>/2"",
+                    ""name"": ""positive"",
+                    ""id"": ""7c9c73a3-f865-4172-a713-c5890d0eb50b"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeMagic2"",
+                    ""action"": ""ChangeMagic"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ac17673c-df6b-4e16-a2d3-2587184a1baa"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ChangeMagic2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5bc5afd1-2a7c-4314-a8fa-2d5a9118f76c"",
-                    ""path"": ""<Keyboard>/4"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ChangeMagicNull"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""296b8920-6cb7-471a-948e-6312a0f651bb"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ChangeMagicNull"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -866,10 +850,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
-        m_Player_ChangeMagicNull = m_Player.FindAction("ChangeMagicNull", throwIfNotFound: true);
-        m_Player_ChangeMagic1 = m_Player.FindAction("ChangeMagic1", throwIfNotFound: true);
-        m_Player_ChangeMagic2 = m_Player.FindAction("ChangeMagic2", throwIfNotFound: true);
-        m_Player_ChangeMagic3 = m_Player.FindAction("ChangeMagic3", throwIfNotFound: true);
+        m_Player_ChangeMagic = m_Player.FindAction("ChangeMagic", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -951,10 +932,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
     private readonly InputAction m_Player_Interaction;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_Reload;
-    private readonly InputAction m_Player_ChangeMagicNull;
-    private readonly InputAction m_Player_ChangeMagic1;
-    private readonly InputAction m_Player_ChangeMagic2;
-    private readonly InputAction m_Player_ChangeMagic3;
+    private readonly InputAction m_Player_ChangeMagic;
     public struct PlayerActions
     {
         private @PlayerInputActionAsset m_Wrapper;
@@ -967,10 +945,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
-        public InputAction @ChangeMagicNull => m_Wrapper.m_Player_ChangeMagicNull;
-        public InputAction @ChangeMagic1 => m_Wrapper.m_Player_ChangeMagic1;
-        public InputAction @ChangeMagic2 => m_Wrapper.m_Player_ChangeMagic2;
-        public InputAction @ChangeMagic3 => m_Wrapper.m_Player_ChangeMagic3;
+        public InputAction @ChangeMagic => m_Wrapper.m_Player_ChangeMagic;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1004,18 +979,9 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
             @Reload.started += instance.OnReload;
             @Reload.performed += instance.OnReload;
             @Reload.canceled += instance.OnReload;
-            @ChangeMagicNull.started += instance.OnChangeMagicNull;
-            @ChangeMagicNull.performed += instance.OnChangeMagicNull;
-            @ChangeMagicNull.canceled += instance.OnChangeMagicNull;
-            @ChangeMagic1.started += instance.OnChangeMagic1;
-            @ChangeMagic1.performed += instance.OnChangeMagic1;
-            @ChangeMagic1.canceled += instance.OnChangeMagic1;
-            @ChangeMagic2.started += instance.OnChangeMagic2;
-            @ChangeMagic2.performed += instance.OnChangeMagic2;
-            @ChangeMagic2.canceled += instance.OnChangeMagic2;
-            @ChangeMagic3.started += instance.OnChangeMagic3;
-            @ChangeMagic3.performed += instance.OnChangeMagic3;
-            @ChangeMagic3.canceled += instance.OnChangeMagic3;
+            @ChangeMagic.started += instance.OnChangeMagic;
+            @ChangeMagic.performed += instance.OnChangeMagic;
+            @ChangeMagic.canceled += instance.OnChangeMagic;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1044,18 +1010,9 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
             @Reload.started -= instance.OnReload;
             @Reload.performed -= instance.OnReload;
             @Reload.canceled -= instance.OnReload;
-            @ChangeMagicNull.started -= instance.OnChangeMagicNull;
-            @ChangeMagicNull.performed -= instance.OnChangeMagicNull;
-            @ChangeMagicNull.canceled -= instance.OnChangeMagicNull;
-            @ChangeMagic1.started -= instance.OnChangeMagic1;
-            @ChangeMagic1.performed -= instance.OnChangeMagic1;
-            @ChangeMagic1.canceled -= instance.OnChangeMagic1;
-            @ChangeMagic2.started -= instance.OnChangeMagic2;
-            @ChangeMagic2.performed -= instance.OnChangeMagic2;
-            @ChangeMagic2.canceled -= instance.OnChangeMagic2;
-            @ChangeMagic3.started -= instance.OnChangeMagic3;
-            @ChangeMagic3.performed -= instance.OnChangeMagic3;
-            @ChangeMagic3.canceled -= instance.OnChangeMagic3;
+            @ChangeMagic.started -= instance.OnChangeMagic;
+            @ChangeMagic.performed -= instance.OnChangeMagic;
+            @ChangeMagic.canceled -= instance.OnChangeMagic;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1201,10 +1158,7 @@ public partial class @PlayerInputActionAsset: IInputActionCollection2, IDisposab
         void OnInteraction(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
-        void OnChangeMagicNull(InputAction.CallbackContext context);
-        void OnChangeMagic1(InputAction.CallbackContext context);
-        void OnChangeMagic2(InputAction.CallbackContext context);
-        void OnChangeMagic3(InputAction.CallbackContext context);
+        void OnChangeMagic(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

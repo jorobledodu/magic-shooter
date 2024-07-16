@@ -10,6 +10,7 @@ TagManager:
   - Enemigos
   - Floor/Dirt
   - NPC
+  - Obstaculo/Fuego
   layers:
   - Default
   - TransparentFX

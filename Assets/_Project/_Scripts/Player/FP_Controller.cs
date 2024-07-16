@@ -131,9 +131,9 @@ public class FP_Controller : MonoBehaviour
     {
         _inputHandle = Player_InputHandle.instance;
 
-        runSpeed = walkSpeed * 2;
-        crouchSpeed = walkSpeed / 2;
-        slowedSpeed = walkSpeed / 3;
+        runSpeed = walkSpeed * 1.5f;
+        crouchSpeed = walkSpeed / 1.5f;
+        slowedSpeed = walkSpeed / 2.5f;
 
         interactuarText.text = "";
 
@@ -215,7 +215,6 @@ public class FP_Controller : MonoBehaviour
     {
         currentHealth = 0;
 
-        Debug.Log("DEATH");
     }
     private IEnumerator RegenerateHealth()
     {
@@ -324,23 +323,18 @@ public class FP_Controller : MonoBehaviour
                 {
                     case "Floor/Concrete":
                         _SFXAudioSource.PlayOneShot(concreteStepsClips[UnityEngine.Random.Range(0, concreteStepsClips.Length - 1)]);
-                        Debug.Log("Concrete");
                         break;
                     case "Floor/Wood":
                         _SFXAudioSource.PlayOneShot(woodStepsClips[UnityEngine.Random.Range(0, woodStepsClips.Length - 1)]);
-                        Debug.Log("Wood");
                         break;
                     case "Floor/Wet":
                         _SFXAudioSource.PlayOneShot(wetStepsClips[UnityEngine.Random.Range(0, wetStepsClips.Length - 1)]);
-                        Debug.Log("Wet");
                         break;
                     case "Floor/Dirt":
                         _SFXAudioSource.PlayOneShot(dirtStepsClips[UnityEngine.Random.Range(0, dirtStepsClips.Length - 1)]);
-                        Debug.Log("Dirt");
                         break;
                     default:
                         _SFXAudioSource.PlayOneShot(dirtStepsClips[UnityEngine.Random.Range(0, dirtStepsClips.Length - 1)]);
-                        Debug.Log("Default");
                         break;
                 }
             }

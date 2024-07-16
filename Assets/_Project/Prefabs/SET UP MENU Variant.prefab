@@ -143,6 +143,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Atras
       objectReference: {fileID: 0}
+    - target: {fileID: 2459344043175996830, guid: 37bc916b3519687459c41cfde237012e,
+        type: 3}
+      propertyPath: m_Name
+      value: Interaction Imagen
+      objectReference: {fileID: 0}
     - target: {fileID: 2459379959482909341, guid: 37bc916b3519687459c41cfde237012e,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -178,10 +183,40 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2932480028654730510, guid: 37bc916b3519687459c41cfde237012e,
+        type: 3}
+      propertyPath: m_text
+      value: 'WASD/Left Stick - Move
+
+        Mouse/Right Stick - Camera Move
+
+        Space/Boton
+        South - Jump
+
+        Left Shift/Left Stick Hold - Run
+
+        Left Ctrl/Right
+        Stick Press - Crouch
+
+        F/Button East - Interact
+
+        Left Button
+        Mouse/Right Trigger - Shoot
+
+        Q, E/Left, Right Shoulder - Change Magic
+
+        Esc/Start
+        o Select - Pausa'
+      objectReference: {fileID: 0}
     - target: {fileID: 3054804758776212240, guid: 37bc916b3519687459c41cfde237012e,
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3194234377547101138, guid: 37bc916b3519687459c41cfde237012e,
+        type: 3}
+      propertyPath: m_Name
+      value: Barra de vida Fill
       objectReference: {fileID: 0}
     - target: {fileID: 3194234377547101138, guid: 37bc916b3519687459c41cfde237012e,
         type: 3}

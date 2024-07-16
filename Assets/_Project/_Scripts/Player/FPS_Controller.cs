@@ -16,14 +16,32 @@ public class ListaMagias
 
     public bool IsActiva => activa;
     public MagiasDisponibles TipoMagia => magia;
+
+    public void Activar()
+    {
+        activa = true;
+        if (VFX != null)
+        {
+            VFX.SetActive(true);
+        }
+    }
+
+    public void Desactivar()
+    {
+        activa = false;
+        if (VFX != null)
+        {
+            VFX.SetActive(false);
+        }
+    }
 }
 public class FPS_Controller : MonoBehaviour
 {
+    public static FPS_Controller instance;
+
     public bool CanShoot { get; set; } = true;
     public bool CanReload { get; set; } = true;
     public bool CanChangeMagic { get; set; } = true;
-
-    public static FPS_Controller instance;
 
     //References
     public Camera _fpCamera;
@@ -52,7 +70,6 @@ public class FPS_Controller : MonoBehaviour
     public bool magia_rayo;
     public bool magia_agua;
     public bool magia_fuego;
-    public Transform magiasHandle;
     public MagiasDisponibles magiaActiva;
 
     private void Awake()
@@ -61,8 +78,6 @@ public class FPS_Controller : MonoBehaviour
 
         bulletsLeft = magazineSize;
         readyToShoot = true;
-
-        ChangeMagicNull();
     }
     private void Update()
     {   
@@ -72,6 +87,17 @@ public class FPS_Controller : MonoBehaviour
 
     public void Shoot()
     {
+        // Encontrar el índice del elemento activo
+        int currentIndex = -1;
+        for (int i = 0; i < listaMagias.Length; i++)
+        {
+            if (listaMagias[i].IsActiva)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+
         //Shoot
         if (readyToShoot && !reloading && bulletsLeft > 0)
         {
@@ -106,17 +132,15 @@ public class FPS_Controller : MonoBehaviour
                     //Comprobar si el objetivo tiene el script "Magias"
                     if (rayHit.transform.TryGetComponent(out Magias magiasHit))
                     {
-                        Debug.Log(magiasHit);
-                        magiasHit.CambiarMagia(magiaActiva);
+                        magiasHit.CambiarMagia(listaMagias[currentIndex].TipoMagia);
                         magiasHit.CambiarEstado();
-                        //magiasHit.ComprobarEstado();
+                        magiasHit.CleanEstado();
                     }
                     else if (rayHit.transform.parent.root.TryGetComponent(out Magias magiasHitP))
                     {
-                        Debug.Log(magiasHitP);
-                        magiasHitP.CambiarMagia(magiaActiva);
+                        magiasHitP.CambiarMagia(listaMagias[currentIndex].TipoMagia);
                         magiasHitP.CambiarEstado();
-                        //magiasHitP.ComprobarEstado();
+                        magiasHitP.CleanEstado();
                     }
                 }
                 else if (rayHit.collider.CompareTag("NPC"))
@@ -124,6 +148,17 @@ public class FPS_Controller : MonoBehaviour
                     //Graphics  
                     Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
                     Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+                }
+                else if (rayHit.collider.CompareTag("Obstaculo/Fuego"))
+                {
+                    //Graphics  
+                    Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
+                    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+
+                    if (listaMagias[currentIndex].TipoMagia == MagiasDisponibles.Agua)
+                    {
+                        Destroy(rayHit.transform.gameObject);
+                    }
                 }
                 else
                 {
@@ -171,36 +206,46 @@ public class FPS_Controller : MonoBehaviour
         reloading = false;
     }
 
-    public void ChangeMagicNull()
+    public void ChangeMagic(float value)
     {
-        magiasHandle.GetChild(0).gameObject.SetActive(false);
-        magiasHandle.GetChild(1).gameObject.SetActive(false);
-        magiasHandle.GetChild(2).gameObject.SetActive(false);
+        // Encontrar el índice del elemento activo
+        int currentIndex = -1;
+        for (int i = 0; i < listaMagias.Length; i++)
+        {
+            if (listaMagias[i].IsActiva)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
 
-        magiaActiva = MagiasDisponibles.Null;
-    }
-    public void ChangeMagic1()
-    {
-        magiasHandle.GetChild(0).gameObject.SetActive(true);
-        magiasHandle.GetChild(1).gameObject.SetActive(false);
-        magiasHandle.GetChild(2).gameObject.SetActive(false);
+        // Si no hay un elemento activo, no hacer nada
+        if (currentIndex == -1)
+        {
+            return;
+        }
 
-        magiaActiva = magiasHandle.GetChild(0).GetComponent<Magias>().magia;
-    }
-    public void ChangeMagic2()
-    {
-        magiasHandle.GetChild(0).gameObject.SetActive(false);
-        magiasHandle.GetChild(1).gameObject.SetActive(true);
-        magiasHandle.GetChild(2).gameObject.SetActive(false);
+        // Desactivar el elemento actual
+        listaMagias[currentIndex].Desactivar();
 
-        magiaActiva = magiasHandle.GetChild(1).GetComponent<Magias>().magia;
-    }
-    public void ChangeMagic3()
-    {
-        magiasHandle.GetChild(0).gameObject.SetActive(false);
-        magiasHandle.GetChild(1).gameObject.SetActive(false);
-        magiasHandle.GetChild(2).gameObject.SetActive(true);
+        // Calcular el nuevo índice basado en value
+        int newIndex;
+        if (value > 0)
+        {
+            newIndex = (currentIndex - 1 + listaMagias.Length) % listaMagias.Length;
+        }
+        else if (value < 0)
+        {
+            newIndex = (currentIndex + 1) % listaMagias.Length;
+        }
+        else
+        {
+            // Si value es 0, no hacer nada
+            listaMagias[currentIndex].Activar();
+            return;
+        }
 
-        magiaActiva = magiasHandle.GetChild(2).GetComponent<Magias>().magia;
+        // Activar el nuevo elemento
+        listaMagias[newIndex].Activar();
     }
 }
