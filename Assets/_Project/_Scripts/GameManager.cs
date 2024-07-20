@@ -8,13 +8,16 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    public List<AIUnit> aiUnitsInScene;
+    public bool gameStarted = false;
+
+    [Header("Contador")]
+    [SerializeField] private TextMeshProUGUI textoContador;
+    [SerializeField] private Color colorPorDefecto = Color.white;
+
     [Header("Contador regresivo")]
     public bool contadorRegresivo = false;
-    [SerializeField] private TextMeshProUGUI textoContador;
     [SerializeField] private float tiempoMaximo = 300f; // 5 minutos
     private float tiempoInicial;
-    [SerializeField] private Color colorPorDefecto = Color.white;
     [SerializeField] private Color colorAlarma = Color.red;
     [Range(0, 1)]
     [SerializeField] private float porcentajeAlarma = 0.4f; // 40% del tiempo máximo
@@ -23,8 +26,11 @@ public class GameManager : MonoBehaviour
     public bool contadorProgresivo = false;
     public float tiempoTranscurrido;
 
-    public bool gameStarted = false;
-
+    [Header("Enemigos")]
+    public GameObject enemigoPrefab;
+    public GameObject[] spawners;
+    public List<AIUnit> aiUnitsInScene;
+    public static int enemigosDerrotados;
 
     private void Awake()
     {
@@ -49,10 +55,36 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        BuscarEnemigos();
+    }
+
+    private void SpawnEnemigos()
+    {
+        // Destruir todas las unidades muertas
+        for (int i = aiUnitsInScene.Count - 1; i >= 0; i--)
+        {
+            if (aiUnitsInScene[i].muerto)
+            {
+                Destroy(aiUnitsInScene[i].gameObject);
+            }
+        }
+
+        // Instanciar nuevos enemigos en cada spawner
+        foreach (GameObject spawner in spawners)
+        {
+            Instantiate(enemigoPrefab, spawner.transform.position, spawner.transform.rotation);
+        }
+
+        // Ejecutar la función BuscarEnemigos
+        BuscarEnemigos();
+    }
+
+    private void BuscarEnemigos()
+    {
         // Inicializar la lista
         aiUnitsInScene = new List<AIUnit>();
 
-        // Encontrar todos los objetos con el script MyScript
+        // Encontrar todos los objetos con el script AIUnit
         AIUnit[] foundObjects = FindObjectsOfType<AIUnit>();
 
         // Añadirlos a la lista
@@ -94,7 +126,7 @@ public class GameManager : MonoBehaviour
                 {
                     tiempoMaximo = 0;
                     // Condición: si los enemigos están muertos, ganas; si no, pierdes
-                    VerificarCondicionVictoria();
+                    VerificarEventosDeVictoria();
                 }
 
                 FormatoTextoContador(tiempoMaximo);
@@ -113,18 +145,13 @@ public class GameManager : MonoBehaviour
         textoContador.text = string.Format("{0:00}:{1:00}", minutos, segundos);
     }
 
-    private void VerificarCondicionVictoria()
+    private void VerificarEventosDeVictoria()
     {
-        // Aquí debes implementar la lógica para verificar si los enemigos están muertos
-        // y definir si el jugador gana o pierde.
-        // Ejemplo:
-        // if (todosLosEnemigosEstanMuertos)
-        // {
-        //     MostrarMensajeVictoria();
-        // }
-        // else
-        // {
-        //     MostrarMensajeDerrota();
-        // }
+        if (contadorRegresivo == true && contadorProgresivo == false)
+        {  
+        }
+        else if (contadorRegresivo == false && contadorProgresivo == true)
+        {
+        }
     }
 }

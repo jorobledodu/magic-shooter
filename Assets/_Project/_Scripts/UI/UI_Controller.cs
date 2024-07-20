@@ -19,6 +19,8 @@ public class UI_Controller : MonoBehaviour
     [Header("General")]
     public GameObject playerUI;
     public GameObject pauseUI;
+    public GameObject victoriaUI;
+    public GameObject derrotaUI;
 
     [Header("Inicio")]
     public GameObject inicioMenu;
@@ -55,17 +57,6 @@ public class UI_Controller : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        //if (SceneManager.GetActiveScene().buildIndex == 0)
-        //{
-        //    Cursor.lockState = CursorLockMode.Confined;
-        //    Cursor.visible = true;
-        //}
-        //else if (SceneManager.GetActiveScene().buildIndex == 1)
-        //{
-        //    Cursor.lockState = CursorLockMode.Locked;
-        //    Cursor.visible = true;
-        //}
     }
     private void Update()
     {
@@ -196,6 +187,21 @@ public class UI_Controller : MonoBehaviour
         Application.Quit();
     }
 
+    public void finPartida(bool isVictoria)
+    {
+        if (isVictoria)
+        {
+            victoriaUI.SetActive(true);
+            Player_InputHandle.instance.enabled = false;
+        }
+        else if (!isVictoria)
+        {
+            derrotaUI.SetActive(true);
+            Player_InputHandle.instance.enabled = false;
+        }
+    }
+
+    #region Opciones graficas y de pantalla
     private List<Resolution> resolucionesComunes = new List<Resolution>
     {
         new Resolution { width = 3840, height = 2160 },
@@ -303,4 +309,5 @@ public class UI_Controller : MonoBehaviour
         resolucionDropdown.value = indiceResolucion;
         resolucionDropdown.RefreshShownValue();
     }
+    #endregion
 }
