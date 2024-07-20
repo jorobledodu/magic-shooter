@@ -62,7 +62,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3466f1cba3744440b83afaa56955b573, type: 2}
-  - {fileID: 2100000, guid: d36381801740443b7b187a3e37249850, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -314,7 +313,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3466f1cba3744440b83afaa56955b573, type: 2}
-  - {fileID: 2100000, guid: d36381801740443b7b187a3e37249850, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -482,7 +480,7 @@ PrefabInstance:
     - target: {fileID: 6294508013172393196, guid: 043176b6a68be2b43b073aaaa4782c7d,
         type: 3}
       propertyPath: m_Name
-      value: CFXR Fire
+      value: CFXR Fire_Lantern_01
       objectReference: {fileID: 0}
     - target: {fileID: 6294508013172393196, guid: 043176b6a68be2b43b073aaaa4782c7d,
         type: 3}
@@ -497,12 +495,12 @@ PrefabInstance:
     - target: {fileID: 7539286505454239565, guid: 043176b6a68be2b43b073aaaa4782c7d,
         type: 3}
       propertyPath: m_Range
-      value: 10
+      value: 8.60418
       objectReference: {fileID: 0}
     - target: {fileID: 7539286505454239565, guid: 043176b6a68be2b43b073aaaa4782c7d,
         type: 3}
       propertyPath: m_Intensity
-      value: 0
+      value: 0.36534992
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
