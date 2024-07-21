@@ -11,7 +11,7 @@ TagManager:
   - Floor/Dirt
   - NPC
   - Obstaculo/Fuego
-  - Obstaculo/Farola
+  - Obstaculo/Linterna
   layers:
   - Default
   - TransparentFX

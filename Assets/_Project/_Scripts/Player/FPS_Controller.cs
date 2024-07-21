@@ -37,7 +37,7 @@ public class ListaMagias
 }
 public class FPS_Controller : MonoBehaviour
 {
-    public static FPS_Controller instance;
+    public static FPS_Controller instance { get; private set; }
 
     public bool CanShoot { get; set; } = true;
     public bool CanReload { get; set; } = true;

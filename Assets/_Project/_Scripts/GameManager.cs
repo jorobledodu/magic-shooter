@@ -13,22 +13,22 @@ public class GameManager : MonoBehaviour
     [Header("Contador")]
     [SerializeField] private TextMeshProUGUI textoContador;
     [SerializeField] private Color colorPorDefecto = Color.white;
+    [SerializeField] private float tiempoTranscurrido;
 
     [Header("Contador regresivo")]
     public bool contadorRegresivo = false;
-    [SerializeField] private float tiempoMaximo = 300f; // 5 minutos
+    [Tooltip("Convertir a segundos (X min * 60)")]
+    [SerializeField] private float tiempoMaximo = 300f;
     private float tiempoInicial;
     [SerializeField] private Color colorAlarma = Color.red;
     [Range(0, 1)]
     [SerializeField] private float porcentajeAlarma = 0.4f; // 40% del tiempo máximo
 
-    [Header("Contador progresivo")]
-    public bool contadorProgresivo = false;
-    public float tiempoTranscurrido;
-
     [Header("Enemigos")]
     public GameObject enemigoPrefab;
     public GameObject[] spawners;
+    public GameObject[] fuegos;
+    public GameObject[] linternas;
     public List<AIUnit> aiUnitsInScene;
     public static int enemigosDerrotados;
 
@@ -42,71 +42,23 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        if (contadorRegresivo == true && contadorProgresivo == false)
+        if (contadorRegresivo == true)
         {
             FormatoTextoContador(tiempoMaximo);
         }
-        else if (contadorRegresivo == false && contadorProgresivo == true)
-        {
-            FormatoTextoContador(tiempoTranscurrido);
-        }
-        else
-        {
-            return;
-        }
 
-        BuscarEnemigos();
+        SpawnEnemigos();
     }
-
-    private void SpawnEnemigos()
-    {
-        // Destruir todas las unidades muertas
-        for (int i = aiUnitsInScene.Count - 1; i >= 0; i--)
-        {
-            if (aiUnitsInScene[i].muerto)
-            {
-                Destroy(aiUnitsInScene[i].gameObject);
-            }
-        }
-
-        // Instanciar nuevos enemigos en cada spawner
-        foreach (GameObject spawner in spawners)
-        {
-            Instantiate(enemigoPrefab, spawner.transform.position, spawner.transform.rotation);
-        }
-
-        // Ejecutar la función BuscarEnemigos
-        BuscarEnemigos();
-    }
-
-    private void BuscarEnemigos()
-    {
-        // Inicializar la lista
-        aiUnitsInScene = new List<AIUnit>();
-
-        // Encontrar todos los objetos con el script AIUnit
-        AIUnit[] foundObjects = FindObjectsOfType<AIUnit>();
-
-        // Añadirlos a la lista
-        foreach (AIUnit obj in foundObjects)
-        {
-            aiUnitsInScene.Add(obj);
-        }
-
-        // Opcional: Imprimir el número de objetos encontrados
-        Debug.Log("Número de objetos encontrados: " + aiUnitsInScene.Count);
-    }
-
     private void Update()
     {
-        Timer(); 
+        Timer();
     }
-
+    
     private void Timer()
     {
         if (gameStarted)
         {
-            if (contadorRegresivo == true && contadorProgresivo == false)
+            if (contadorRegresivo == true)
             {
                 if (tiempoMaximo > 0)
                 {
@@ -126,15 +78,10 @@ public class GameManager : MonoBehaviour
                 {
                     tiempoMaximo = 0;
                     // Condición: si los enemigos están muertos, ganas; si no, pierdes
-                    VerificarEventosDeVictoria();
+                    //VerificarEventosDeVictoria();
                 }
 
                 FormatoTextoContador(tiempoMaximo);
-            }
-            else if (contadorRegresivo == false && contadorProgresivo == true)
-            {
-                tiempoTranscurrido += Time.deltaTime;
-                FormatoTextoContador(tiempoTranscurrido);
             }
         }
     }
@@ -145,13 +92,49 @@ public class GameManager : MonoBehaviour
         textoContador.text = string.Format("{0:00}:{1:00}", minutos, segundos);
     }
 
-    private void VerificarEventosDeVictoria()
+    private void ResetAll()
     {
-        if (contadorRegresivo == true && contadorProgresivo == false)
-        {  
-        }
-        else if (contadorRegresivo == false && contadorProgresivo == true)
+
+    }
+
+    private void SpawnEnemigos()
+    {
+        // Destruir todas las unidades muertas y quitarlas de la lista
+        for (int i = aiUnitsInScene.Count - 1; i >= 0; i--)
         {
+            if (aiUnitsInScene[i].muerto)
+            {
+                Destroy(aiUnitsInScene[i].gameObject);
+                aiUnitsInScene.RemoveAt(i);
+            }
         }
+
+        // Instanciar nuevos enemigos en cada spawner y añadirlos a la lista
+        foreach (GameObject spawner in spawners)
+        {
+            GameObject enemigo = Instantiate(enemigoPrefab, spawner.transform.position, spawner.transform.rotation);
+            AIUnit aiUnit = enemigo.GetComponent<AIUnit>();
+            if (aiUnit != null)
+            {
+                aiUnitsInScene.Add(aiUnit);
+            }
+        }
+
+        // Opcional: Imprimir el número de objetos encontrados
+        Debug.Log("Número de objetos encontrados: " + aiUnitsInScene.Count);
+    }
+
+    private void SpawnFuego()
+    {
+
+    }
+    private void SpawnLinternas()
+    {
+
+    }
+
+    private void CalcularPuntosDeVictoria()
+    {
+
     }
 }

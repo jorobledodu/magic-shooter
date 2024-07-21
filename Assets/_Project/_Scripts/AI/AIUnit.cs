@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [DefaultExecutionOrder(1)]
@@ -55,6 +56,8 @@ public class AIUnit : MonoBehaviour
 
     private void Start()
     {
+        jugador = FPS_Controller.instance.gameObject;
+
         ElegirEstadoInicial();
 
         vidaActual = vidaMaxima;
