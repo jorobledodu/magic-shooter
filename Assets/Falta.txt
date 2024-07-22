@@ -1,0 +1,4 @@
+Solucionar bugs
+Optimizar fps (https://youtu.be/kJ5I9md9NG4?si=tXbgGf5Y97XZdpaD&t=90)
+Mejorar feedback disparo y cuando recibes daño
+Mejorar UI enemigos (sobretodo los estados)
