@@ -19,8 +19,6 @@ public class UI_Controller : MonoBehaviour
     [Header("General")]
     public GameObject playerUI;
     public GameObject pauseUI;
-    public GameObject victoriaUI;
-    public GameObject derrotaUI;
 
     [Header("Inicio")]
     public GameObject inicioMenu;
@@ -41,10 +39,18 @@ public class UI_Controller : MonoBehaviour
     public TMP_Dropdown resolucionDropdown;
     public TextMeshProUGUI resolucionText;
 
+    [Header("Fin de Partida")]
+    private bool finDePartidaBool;
+    public GameObject finDePartidaUI;
+    public GameObject finDePartidaFirsOption;
+    public TextMeshProUGUI enemigosDerrotadosText;
+
     [Header("Dialogos")]
     [SerializeField] private GameObject panelDialogo;
 
     public bool pausa;
+
+    public static int puntos;
 
     private void Awake()
     {
@@ -82,16 +88,19 @@ public class UI_Controller : MonoBehaviour
 
     private void ESC(InputAction.CallbackContext context)
     {
-        Scene _currentScene = SceneManager.GetActiveScene();
-        int _sceneIndex = _currentScene.buildIndex;
+        if (!finDePartidaBool)
+        {
+            Scene _currentScene = SceneManager.GetActiveScene();
+            int _sceneIndex = _currentScene.buildIndex;
 
-        if (_sceneIndex == 0)
-        {
-            Atras();
-        }
-        else if (_sceneIndex == 1)
-        {
-            Pausa();
+            if (_sceneIndex == 0)
+            {
+                Atras();
+            }
+            else if (_sceneIndex == 1)
+            {
+                Pausa();
+            }
         }
     }
     public void Pausa()
@@ -187,18 +196,20 @@ public class UI_Controller : MonoBehaviour
         Application.Quit();
     }
 
-    public void finPartida(bool isVictoria)
+    public void finPartida()
     {
-        if (isVictoria)
+        if (!finDePartidaBool)
         {
-            victoriaUI.SetActive(true);
-            Player_InputHandle.instance.enabled = false;
+            eventSystem.SetSelectedGameObject(finDePartidaFirsOption);
         }
-        else if (!isVictoria)
-        {
-            derrotaUI.SetActive(true);
-            Player_InputHandle.instance.enabled = false;
-        }
+
+        finDePartidaBool = true;
+
+        finDePartidaUI.SetActive(true);
+
+        Player_InputHandle.instance.enabled = false;
+
+        enemigosDerrotadosText.text = "Enemigos derrotados: " + GameManager.enemigosDerrotados.ToString();
     }
 
     #region Opciones graficas y de pantalla

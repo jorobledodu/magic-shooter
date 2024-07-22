@@ -13,24 +13,38 @@ public class GameManager : MonoBehaviour
     [Header("Contador")]
     [SerializeField] private TextMeshProUGUI textoContador;
     [SerializeField] private Color colorPorDefecto = Color.white;
-    [SerializeField] private float tiempoTranscurrido;
 
     [Header("Contador regresivo")]
     public bool contadorRegresivo = false;
-    [Tooltip("Convertir a segundos (X min * 60)")]
-    [SerializeField] private float tiempoMaximo = 300f;
-    private float tiempoInicial;
+    [Tooltip("Tiempo en MINUTOS")]
+    public float tiempo;
+    [Tooltip("Tiempo en MINUTOS")]
+    [SerializeField]private float tiempoInicial;
     [SerializeField] private Color colorAlarma = Color.red;
     [Range(0, 1)]
     [SerializeField] private float porcentajeAlarma = 0.4f; // 40% del tiempo máximo
 
-    [Header("Enemigos")]
-    public GameObject enemigoPrefab;
-    public GameObject[] spawners;
-    public GameObject[] fuegos;
-    public GameObject[] linternas;
+    [Header("Entorno")]
+    [Tooltip("Tiempo en MINUTOS")]
+    [SerializeField] private float resetEntorno;
+    [Tooltip("Tiempo en SEGUNDOS")]
+    [SerializeField] private float tiempoRecompensa;
+    [SerializeField] private GameObject enemigoPrefab;
+    [SerializeField] private GameObject[] spawners;
+    [SerializeField] private GameObject[] fuegos;
+    [SerializeField] private GameObject[] linternas;
     public List<AIUnit> aiUnitsInScene;
     public static int enemigosDerrotados;
+
+    [Header("Info")]
+    public GameObject dialogoPanel;
+    public TextMeshProUGUI dialogoText;
+    [SerializeField] private DialogosScriptableObject infoInicioScriptableObject;
+    [SerializeField] private DialogosScriptableObject infoSpawnScriptableObject;
+    [SerializeField] private float tiempoEntreCaracteres;
+    private int indexDialogo;
+
+    private bool _noLoopResetEntorno = false;
 
     private void Awake()
     {
@@ -38,13 +52,17 @@ public class GameManager : MonoBehaviour
         instance = this;
         #endregion
 
-        tiempoInicial = tiempoMaximo;
+        //Convertir a segundos (X min * 60)
+        tiempoInicial = tiempoInicial * 60;
+        resetEntorno = resetEntorno * 60;
+
+        tiempo = tiempoInicial;
     }
     private void Start()
     {
         if (contadorRegresivo == true)
         {
-            FormatoTextoContador(tiempoMaximo);
+            FormatoTextoContador(tiempo);
         }
 
         SpawnEnemigos();
@@ -52,6 +70,16 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         Timer();
+        // Comprobar si el juego ha comenzado
+        if (gameStarted && !_noLoopResetEntorno)
+        {
+            Debug.Log("Debug solo 1 vez");
+            _noLoopResetEntorno = true; // Evitar que esto se ejecute múltiples veces
+            InvokeRepeating("ResetAll", resetEntorno, resetEntorno);
+
+            dialogoPanel.SetActive(true);
+            IniciarDialogo(infoInicioScriptableObject);
+        }
     }
     
     private void Timer()
@@ -60,12 +88,12 @@ public class GameManager : MonoBehaviour
         {
             if (contadorRegresivo == true)
             {
-                if (tiempoMaximo > 0)
+                if (tiempo > 0)
                 {
-                    tiempoMaximo -= Time.deltaTime;
+                    tiempo -= Time.deltaTime;
 
                     // Si el tiempo restante es inferior a un porcentaje del tiempo inicial, cambiar el color del texto
-                    if (tiempoMaximo < porcentajeAlarma * tiempoInicial)
+                    if (tiempo < porcentajeAlarma * tiempoInicial)
                     {
                         textoContador.color = colorAlarma;
                     }
@@ -74,14 +102,14 @@ public class GameManager : MonoBehaviour
                         textoContador.color = colorPorDefecto;
                     }
                 }
-                else if (tiempoMaximo <= 0)
+                else if (tiempo <= 0)
                 {
-                    tiempoMaximo = 0;
-                    // Condición: si los enemigos están muertos, ganas; si no, pierdes
-                    //VerificarEventosDeVictoria();
+                    tiempo = 0;
+
+                    UI_Controller.instance.finPartida();
                 }
 
-                FormatoTextoContador(tiempoMaximo);
+                FormatoTextoContador(tiempo);
             }
         }
     }
@@ -91,10 +119,22 @@ public class GameManager : MonoBehaviour
         int segundos = Mathf.FloorToInt(tiempo % 60);
         textoContador.text = string.Format("{0:00}:{1:00}", minutos, segundos);
     }
+    public void MasTiempo()
+    {
+        tiempo += tiempoRecompensa;
+    }
 
     private void ResetAll()
     {
+        if (gameStarted)
+        {
+            SpawnEnemigos();
+            SpawnFuego();
+            SpawnLinternas();
 
+            dialogoPanel.SetActive(true);
+            IniciarDialogo(infoSpawnScriptableObject);
+        }
     }
 
     private void SpawnEnemigos()
@@ -126,15 +166,62 @@ public class GameManager : MonoBehaviour
 
     private void SpawnFuego()
     {
+        int numToActivate = Random.Range(0, fuegos.Length);
 
+        int fuegosActivos = 0;
+
+        foreach (GameObject fuego in fuegos)
+        {
+            OnOffParticle onOff = fuego.GetComponent<OnOffParticle>();
+            if (onOff != null && !onOff.isOn && fuegosActivos < numToActivate)
+            {
+                onOff.StartParticleSystem();
+                fuegosActivos++;
+            }
+        }
     }
+
     private void SpawnLinternas()
     {
+        int numToDeactivate = Random.Range(0, linternas.Length);
 
+        int linternasApagadas = 0;
+
+        foreach (GameObject linterna in linternas)
+        {
+            OnOffParticle onOff = linterna.GetComponent<OnOffParticle>();
+            if (onOff != null && onOff.isOn && linternasApagadas < numToDeactivate)
+            {
+                onOff.StopParticleSystem();
+                linternasApagadas++;
+            }
+        }
     }
 
-    private void CalcularPuntosDeVictoria()
+    private void IniciarDialogo(DialogosScriptableObject _dialogosScriptableObject)
     {
+        indexDialogo = 0;
+        MostrarSiguienteDialogo(_dialogosScriptableObject);
+    }
 
+    private void MostrarSiguienteDialogo(DialogosScriptableObject _dialogosScriptableObject)
+    {
+        if (indexDialogo < _dialogosScriptableObject.dialogo.Length)
+        {
+            StartCoroutine(EscribirLinea(_dialogosScriptableObject.dialogo[indexDialogo]));
+        }
+    }
+
+    private IEnumerator EscribirLinea(Dialogo dialogo)
+    {
+        dialogoText.text = $"{dialogo.Persona}";
+        foreach (char c in dialogo.Contenido)
+        {
+            dialogoText.text += c;
+            yield return new WaitForSeconds(tiempoEntreCaracteres);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        dialogoPanel.SetActive(false);
     }
 }

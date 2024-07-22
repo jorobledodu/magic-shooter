@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dialogo
   m_EditorClassIdentifier: 
   dialogo:
-  - persona: Old Man
+  - persona: Hombre Mayor
     contenido: Los monstruos han arrasado e invadido nuestro pueblo...
-  - persona: Old Man
-    contenido: "Porfavor librate de ellos. \xA1Como sea!"
+  - persona: Hombre Myor
+    contenido: "Por favor l\xEDbrate de ellos. \xA1Como sea!"

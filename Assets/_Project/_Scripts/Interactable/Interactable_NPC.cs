@@ -17,12 +17,6 @@ public class Interactable_NPC : Interactable
 
     private int indexDialogo;
 
-    //private void Awake()
-    //{
-    //    base.Awake();
-    //    instance = this;
-    //}
-
     public override void OnFocus() { }
 
     public override void OnInteract()
@@ -48,9 +42,8 @@ public class Interactable_NPC : Interactable
         {
             StartCoroutine(EscribirLinea(dialogosScriptableObject.dialogo[indexDialogo]));
         }
-        else
+        else //Dialogo terminado
         {
-            Debug.Log("Diálogo terminado");
             panelDialogo.SetActive(false);
             animator.SetBool("hablando", false);
             Player_InputHandle.instance.enabled = true;

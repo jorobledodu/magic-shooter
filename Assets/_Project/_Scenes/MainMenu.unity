@@ -489,7 +489,7 @@ PrefabInstance:
     - target: {fileID: 181846333855352305, guid: 37bc916b3519687459c41cfde237012e,
         type: 3}
       propertyPath: m_text
-      value: TITULO JUEGO
+      value: Magic Shooter
       objectReference: {fileID: 0}
     - target: {fileID: 183315993329261369, guid: 37bc916b3519687459c41cfde237012e,
         type: 3}

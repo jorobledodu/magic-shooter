@@ -82,6 +82,8 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private Image interactionCroshairImage;
     private Interactable currentInteractable;
 
+    public AudioSource musicaAudioSource;
+
     ///Variables
     //Movemnt
     private float velocityMultiplicator;
@@ -215,6 +217,9 @@ public class FP_Controller : MonoBehaviour
     {
         currentHealth = 0;
 
+        UI_Controller.instance.finPartida();
+
+        musicaAudioSource.Stop();
     }
     private IEnumerator RegenerateHealth()
     {

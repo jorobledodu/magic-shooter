@@ -157,7 +157,18 @@ public class FPS_Controller : MonoBehaviour
 
                     if (listaMagias[currentIndex].TipoMagia == MagiasDisponibles.Agua)
                     {
-                        Destroy(rayHit.transform.gameObject);
+                        rayHit.transform.GetComponent<OnOffParticle>().StopParticleSystem();
+                    }
+                }
+                else if (rayHit.collider.CompareTag("Obstaculo/Linterna"))
+                {
+                    //Graphics  
+                    Instantiate(_prefabHit, rayHit.point, Quaternion.LookRotation(rayHit.normal));
+                    Instantiate(_prefanHitFlash, _fpCamera.transform.position + (rayHit.point - _fpCamera.transform.position) * 0.85f, Quaternion.LookRotation(rayHit.normal));
+
+                    if (listaMagias[currentIndex].TipoMagia == MagiasDisponibles.Fuego)
+                    {
+                        rayHit.transform.GetComponent<OnOffParticle>().StartParticleSystem();
                     }
                 }
                 else

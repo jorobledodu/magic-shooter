@@ -215,6 +215,8 @@ public class AIUnit : MonoBehaviour
         ragdoll.ActivarRagdoll();
 
         muerto = true;
+
+        GameManager.enemigosDerrotados++;
     }
     public void RecibirDaño(float daño)
     {

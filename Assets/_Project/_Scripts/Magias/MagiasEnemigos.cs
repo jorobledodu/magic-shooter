@@ -140,9 +140,7 @@ public class MagiasEnemigos : Magias
     }
     private IEnumerator CleanEstadoCorrutina()
     {
-        Debug.Log("Iniciando limpieza de estado");
         yield return new WaitForSeconds(cleanEstadoTiempo);
-        Debug.Log("Estado limpiado");
         estado = EstadosDisponibles.Null;  // Asegúrate de tener acceso a `estado`
         cleanEstadoCorrutina = null;
 
