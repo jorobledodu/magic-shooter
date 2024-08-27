@@ -1,7 +1,6 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,6 +31,7 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private float timeBeforeRegenHealth = 3.0f;
     [SerializeField] private float healthValueIncrement = 1.0f;
     [SerializeField] private float healthTimeIncrement = 0.1f;
+    [SerializeField] private List<GameObject> bloodParticles;
 
     [Header("Look Parametres")]
     [SerializeField] private float lookSpeedHorizontal = 2.0f;
@@ -192,6 +192,8 @@ public class FP_Controller : MonoBehaviour
     }
     public void TakeDamage(float dmg)
     {
+        hitVFX();
+
         currentHealth -= dmg;
 
         if (currentHealth <= 0.0f)
@@ -220,6 +222,44 @@ public class FP_Controller : MonoBehaviour
         UI_Controller.instance.finPartida();
 
         musicaAudioSource.Stop();
+    }
+    private void hitVFX()
+    {
+        int randomInt = Random.Range(0,6);
+
+        switch (randomInt) 
+        {
+            case 0:
+                bloodParticles[0].SetActive(true);
+                bloodParticles[1].SetActive(false);
+                bloodParticles[2].SetActive(false);
+                break;
+            case 1:
+                bloodParticles[0].SetActive(false);
+                bloodParticles[1].SetActive(true);
+                bloodParticles[2].SetActive(false);
+                break;
+            case 2:
+                bloodParticles[0].SetActive(false);
+                bloodParticles[1].SetActive(false);
+                bloodParticles[2].SetActive(true);
+                break;
+            case 3:
+                bloodParticles[0].SetActive(true);
+                bloodParticles[1].SetActive(true);
+                bloodParticles[2].SetActive(false);
+                break;
+            case 4:
+                bloodParticles[0].SetActive(true);
+                bloodParticles[1].SetActive(false);
+                bloodParticles[2].SetActive(true);
+                break;
+            case 5:
+                bloodParticles[0].SetActive(false);
+                bloodParticles[1].SetActive(true);
+                bloodParticles[2].SetActive(true);
+                break;       
+        }
     }
     private IEnumerator RegenerateHealth()
     {

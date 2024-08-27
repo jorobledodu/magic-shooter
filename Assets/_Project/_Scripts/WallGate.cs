@@ -13,8 +13,6 @@ public class WallGate : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        GetComponent<Collider>().isTrigger = false;
-        GameManager.instance.gameStarted = true;
         gateAnimator.SetBool("isOpen", false);
     }
 }
