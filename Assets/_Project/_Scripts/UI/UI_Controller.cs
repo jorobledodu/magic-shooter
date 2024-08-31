@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -39,8 +40,13 @@ public class UI_Controller : MonoBehaviour
     public TMP_Dropdown resolucionDropdown;
     public TextMeshProUGUI resolucionText;
 
+    [Header("Usuario")]
+    public GameObject usuarioMenu;
+    public GameObject usuarioMenuFirstOption;
+    public TMP_InputField usuarioInputField;
+
     [Header("Fin de Partida")]
-    private bool finDePartidaBool;
+    public bool finDePartidaBool;
     public GameObject finDePartidaUI;
     public GameObject finDePartidaFirsOption;
     public TextMeshProUGUI enemigosDerrotadosText;
@@ -144,21 +150,34 @@ public class UI_Controller : MonoBehaviour
             playerUI.SetActive(true);
             pauseUI.SetActive(false);
         }
-        else if (!inicioMenu.activeInHierarchy && opcionesMenu.activeInHierarchy && !graficosMenu.activeInHierarchy)
+        else if (!inicioMenu.activeInHierarchy && opcionesMenu.activeInHierarchy && !graficosMenu.activeInHierarchy && !usuarioMenu.activeInHierarchy)
         {
             inicioMenu.SetActive(true);
             opcionesMenu.SetActive(false);
             graficosMenu.SetActive(false);
+            usuarioMenu.SetActive(false);
 
-            eventSystem.SetSelectedGameObject(inicioMenuFirstOption);
+            PrimeraOpcion();
         }
-        else if (!inicioMenu.activeInHierarchy && !opcionesMenu.activeInHierarchy && graficosMenu.activeInHierarchy)
+        else if (!inicioMenu.activeInHierarchy && !opcionesMenu.activeInHierarchy && graficosMenu.activeInHierarchy && !usuarioMenu.activeInHierarchy)
         {
             inicioMenu.SetActive(false);
             opcionesMenu.SetActive(true);
             graficosMenu.SetActive(false);
+            usuarioMenu.SetActive(false);
 
-            eventSystem.SetSelectedGameObject(opcionesMenuFirstOption);
+            PrimeraOpcion();
+        }
+        else if (!inicioMenu.activeInHierarchy && !opcionesMenu.activeInHierarchy && !graficosMenu.activeInHierarchy && usuarioMenu.activeInHierarchy)
+        {
+            usuarioInputField.text = " ";
+
+            inicioMenu.SetActive(true);
+            opcionesMenu.SetActive(false);
+            graficosMenu.SetActive(false);
+            usuarioMenu.SetActive(false);
+
+            PrimeraOpcion();
         }
     }
 
@@ -167,6 +186,7 @@ public class UI_Controller : MonoBehaviour
         inicioMenu.SetActive(false);
         opcionesMenu.SetActive(false);
         graficosMenu.SetActive(false);
+        usuarioMenu.SetActive(false);
 
         obj.SetActive(true);
 
@@ -186,10 +206,39 @@ public class UI_Controller : MonoBehaviour
         {
             eventSystem.SetSelectedGameObject(graficosMenuFirstOption);
         }
+        else if (usuarioMenu.activeInHierarchy == true)
+        {
+            eventSystem.SetSelectedGameObject(usuarioMenuFirstOption);
+        }
+    }
+    public void StartGame(int indexEscena)
+    {
+        string usuarioNombre = usuarioInputField.text.Trim();
+
+        if (string.IsNullOrEmpty(usuarioNombre))
+        {
+            StartCoroutine(ErrorInputField());
+        }
+        else
+        {
+            SceneLoader.LoadScene(indexEscena);
+        }
+    }
+    IEnumerator ErrorInputField()
+    {
+        eventSystem.gameObject.SetActive(false);
+
+        usuarioInputField.image.color = Color.red;
+        yield return new WaitForSeconds(2f);
+        usuarioInputField.image.color = Color.white;
+
+        eventSystem.gameObject.SetActive(true);
     }
     public void ChangeScene(int indexEscena)
     {
-        SceneManager.LoadScene(indexEscena);
+        Time.timeScale = 1;
+
+        SceneLoader.LoadScene(indexEscena);
     }
     public void Salir()
     {
