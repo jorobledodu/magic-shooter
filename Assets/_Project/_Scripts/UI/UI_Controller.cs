@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class UI_Controller : MonoBehaviour
@@ -29,11 +31,14 @@ public class UI_Controller : MonoBehaviour
     [Header("Opciones")]
     public GameObject opcionesMenu;
     public GameObject opcionesMenuFirstOption;
+    public Slider sensibilidadXSlider;
+    public Slider sensibilidadYSlider;
+    [SerializeField] private AudioMixer audioMixer;
     public Slider musicaSlider;
     public Slider vfxSlider;
     [Space(3)]
 
-    [Header("Opciones")]
+    [Header("GRAFICOS")]
     public GameObject graficosMenu;
     public GameObject graficosMenuFirstOption;
     public TMP_Dropdown modoPantallaDropdown;
@@ -44,12 +49,14 @@ public class UI_Controller : MonoBehaviour
     public GameObject usuarioMenu;
     public GameObject usuarioMenuFirstOption;
     public TMP_InputField usuarioInputField;
+    public static string activeUser;
 
     [Header("Fin de Partida")]
     public bool finDePartidaBool;
     public GameObject finDePartidaUI;
     public GameObject finDePartidaFirsOption;
     public TextMeshProUGUI enemigosDerrotadosText;
+    public GameObject leaderboardMenu;
 
     [Header("Dialogos")]
     [SerializeField] private GameObject panelDialogo;
@@ -69,6 +76,14 @@ public class UI_Controller : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            sensibilidadXSlider.value = PlayerPrefs.GetFloat("SensibilidadX", 2.0f);
+            sensibilidadYSlider.value = PlayerPrefs.GetFloat("SensibilidadY", 2.0f);
+        }
+        vfxSlider.value = PlayerPrefs.GetFloat("VolumenSFX", 1.0f);
+        musicaSlider.value = PlayerPrefs.GetFloat("VolumenMusica", 1.0f);
     }
     private void Update()
     {
@@ -221,6 +236,8 @@ public class UI_Controller : MonoBehaviour
         }
         else
         {
+            activeUser = usuarioNombre;
+
             SceneLoader.LoadScene(indexEscena);
         }
     }
@@ -242,6 +259,8 @@ public class UI_Controller : MonoBehaviour
     }
     public void Salir()
     {
+        activeUser = " ";
+
         Application.Quit();
     }
 
@@ -255,10 +274,36 @@ public class UI_Controller : MonoBehaviour
         finDePartidaBool = true;
 
         finDePartidaUI.SetActive(true);
+        leaderboardMenu.SetActive(true);
 
         Player_InputHandle.instance.enabled = false;
 
         enemigosDerrotadosText.text = "Enemigos derrotados: " + GameManager.enemigosDerrotados.ToString();
+
+        Leaderboard_Controller.Instance.SetEntry(activeUser, GameManager.enemigosDerrotados);
+        Leaderboard_Controller.Instance.LoadEntries();
+    }
+
+    public void OnChangeSensibilidadX()
+    {
+        PlayerPrefs.SetFloat("SensibilidadX", sensibilidadXSlider.value);
+        FP_Controller.lookSpeedHorizontal = sensibilidadXSlider.value;
+    }
+    public void OnChangeSensibilidadY()
+    {
+        PlayerPrefs.SetFloat("SensibilidadY", sensibilidadYSlider.value);
+        FP_Controller.lookSpeedVertical = sensibilidadYSlider.value;
+    }
+
+    public void OnChangeVolumenSFX(float volumen)
+    {
+        PlayerPrefs.SetFloat("VolumenSFX", vfxSlider.value);
+        audioMixer.SetFloat("SFXVolume", Mathf.Log10(volumen) * 20f);
+    }
+    public void OnChangeVolumenMusica(float volumen)
+    {
+        PlayerPrefs.SetFloat("VolumenMusica", musicaSlider.value);
+        audioMixer.SetFloat("MusicVolume", Mathf.Log10(volumen) * 20f);
     }
 
     #region Opciones graficas y de pantalla

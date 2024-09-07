@@ -34,8 +34,8 @@ public class FP_Controller : MonoBehaviour
     [SerializeField] private List<GameObject> bloodParticles;
 
     [Header("Look Parametres")]
-    [SerializeField] private float lookSpeedHorizontal = 2.0f;
-    [SerializeField] private float lookSpeedVertical = 2.0f;
+    public static float lookSpeedHorizontal = 2.0f;
+    public static float lookSpeedVertical = 2.0f;
     [SerializeField] private float upperLookLimit = 80.0f;
     [SerializeField] private float lowerLookLimit = 80.0f;
 
@@ -284,10 +284,10 @@ public class FP_Controller : MonoBehaviour
     }
     private void HandleMouseLook()
     {
-        rotationX -= _inputHandle.LookInput.y * lookSpeedVertical;
+        rotationX -= _inputHandle.LookInput.y * PlayerPrefs.GetFloat("SensibilidadY", 2.0f);
         rotationX = Mathf.Clamp(rotationX, -upperLookLimit, lowerLookLimit);
         _fpCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-        transform.rotation *= Quaternion.Euler(0, _inputHandle.LookInput.x * lookSpeedHorizontal, 0);
+        transform.rotation *= Quaternion.Euler(0, _inputHandle.LookInput.x * PlayerPrefs.GetFloat("SensibilidadX", 2.0f), 0);
     }
     private void HandleJump()
     {
