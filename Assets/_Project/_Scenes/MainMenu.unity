@@ -214,8 +214,8 @@ MonoBehaviour:
     Sur - Saltar\nMay\xFAsculas izquierda/Mantener pulsado Stick izquierdo - Correr\nCtrl
     izquierdo/Right Stick pulsado - Agacharse\nF/Bot\xF3n Este - Interactuar\nBot\xF3n
     izquierdo del rat\xF3n/Golpe derecho - Disparar\nQ, E/Hombro izquierdo, derecho
-    - Cambiar magia\nEsc/Start o Select - Pausa\n\nMen\xFA\nWASD/D-Pad - Mover en
-    el men\xFA\nEspacio/Bot\xF3n Sur - Aceptar"
+    - Cambiar magia\nEsc/Start o Select - Pausa\n\nMen\xFA\nWASD, Flechas/D-Pad -
+    Mover en el men\xFA\nEspacio, Enter/Bot\xF3n Sur - Aceptar"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

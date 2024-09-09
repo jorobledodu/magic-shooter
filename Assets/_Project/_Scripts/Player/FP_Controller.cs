@@ -403,7 +403,7 @@ public class FP_Controller : MonoBehaviour
                 if (currentInteractable)
                 {
                     currentInteractable.OnFocus();
-                    interactuarText.text = "F Interactuar";
+                    interactuarText.text = "Interactuar";
                     interactionCroshairImage.gameObject.SetActive(true);
                 }
             }
