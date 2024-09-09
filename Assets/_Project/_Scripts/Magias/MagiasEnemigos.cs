@@ -96,7 +96,7 @@ public class MagiasEnemigos : Magias
 
     private void AplicarEfectoElectrocutado()
     {
-        aiUnit.RecibirDaño(999f);
+        aiUnit.RecibirDaño(50f);
         electrocutadoParticula.gameObject.SetActive(true);
         electrocutadoParticula.Play();
         StartCoroutine(ElectrocutaUnidadesEnRango());

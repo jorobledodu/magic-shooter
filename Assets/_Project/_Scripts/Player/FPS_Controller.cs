@@ -67,9 +67,6 @@ public class FPS_Controller : MonoBehaviour
 
     //Magias
     public ListaMagias[] listaMagias;
-    public bool magia_rayo;
-    public bool magia_agua;
-    public bool magia_fuego;
     public MagiasDisponibles magiaActiva;
 
     private void Awake()
